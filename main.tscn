@@ -1,9 +1,13 @@
-[gd_scene load_steps=4 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=6 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
+[ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
 size = Vector3(100, 1, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
+albedo_color = Color(0.54661, 0.745565, 0.563556, 1)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
 size = Vector3(100, 1, 100)
@@ -11,17 +15,24 @@ size = Vector3(100, 1, 100)
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = ExtResource("2_0xm2m")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, 0.353553, -0.353554, 0, 0.707107, 0.707107, 0.5, -0.612372, 0.612373, 0, 50, 0)
+shadow_enabled = true
+
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6, 28)
+transform = Transform3D(1, 0, 0, 0, 1, -2.98023e-08, 0, 2.98023e-08, 1, 0, 3, 18)
+far = 10000.0
 
 [node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
 [node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
 mesh = SubResource("BoxMesh_ig7tw")
 skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_ig7tw")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_ig7tw")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 50, 0)
