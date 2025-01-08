@@ -1,7 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=10 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
+[ext_resource type="Script" uid="uid://b4u313uc64qx1" path="res://scripts/character_controller.gd" id="3_h2yge"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
+size = Vector3(100, 1, 100)
 
 [sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
 size = Vector3(100, 1, 100)
@@ -9,8 +13,16 @@ size = Vector3(100, 1, 100)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ig7tw"]
 albedo_color = Color(0.54661, 0.745565, 0.563556, 1)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
-size = Vector3(100, 1, 100)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0xm2m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+diffuse_mode = 3
+specular_mode = 1
+albedo_color = Color(1, 0.637308, 0.656419, 1)
+roughness = 0.01
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1bvp3"]
+material = SubResource("StandardMaterial3D_h2yge")
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
@@ -30,10 +42,21 @@ far = 10000.0
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 
+[node name="FloorCollision" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_ig7tw")
+
 [node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
 mesh = SubResource("BoxMesh_ig7tw")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_ig7tw")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
-shape = SubResource("BoxShape3D_ig7tw")
+[node name="CharacterController" type="CharacterBody3D" parent="."]
+script = ExtResource("3_h2yge")
+
+[node name="CharacterCollision" type="CollisionShape3D" parent="CharacterController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_0xm2m")
+
+[node name="CharacterMesh" type="MeshInstance3D" parent="CharacterController"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+mesh = SubResource("CapsuleMesh_1bvp3")
