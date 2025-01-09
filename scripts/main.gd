@@ -14,7 +14,7 @@ func _ready():
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
 
 func _process(delta: float) -> void:
-	print("fps", Engine.get_frames_per_second())
+	print("fps: ", Engine.get_frames_per_second())
 
 func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 	for i in axis_amount:
