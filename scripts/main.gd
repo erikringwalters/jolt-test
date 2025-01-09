@@ -42,4 +42,6 @@ func create_physics_material(bounciness:float):
 func create_color_material(color:Color):
 	var mat = StandardMaterial3D.new()
 	mat.albedo_color = color
+	mat.metallic_specular = 0.75
+	mat.metallic = 0.1
 	return mat

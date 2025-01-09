@@ -1,0 +1,52 @@
+[gd_scene load_steps=8 format=3 uid="uid://cbhuay0pnmahq"]
+
+[ext_resource type="Script" uid="uid://b4u313uc64qx1" path="res://scripts/character_controller.gd" id="1_h7wbc"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_0xm2m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+albedo_color = Color(0.788235, 0.709804, 0.921569, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_1bvp3"]
+material = SubResource("StandardMaterial3D_h2yge")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_color = Color(0.954271, 0.941249, 0.623848, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lquwl"]
+material = SubResource("StandardMaterial3D_1bvp3")
+top_radius = 0.0
+bottom_radius = 0.2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_h2yge"]
+
+[node name="PlayerCB" type="CharacterBody3D"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+script = ExtResource("1_h7wbc")
+
+[node name="Collision" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_0xm2m")
+
+[node name="Mesh" type="MeshInstance3D" parent="Collision"]
+unique_name_in_owner = true
+mesh = SubResource("CapsuleMesh_1bvp3")
+skeleton = NodePath("../..")
+
+[node name="PointerMesh" type="MeshInstance3D" parent="Collision"]
+transform = Transform3D(-1, 8.74228e-08, 3.82137e-15, 0, -4.37114e-08, 1, 8.74228e-08, 1, 4.37114e-08, 1.39877e-07, 0.5, 0.4)
+mesh = SubResource("CylinderMesh_lquwl")
+skeleton = NodePath("../..")
+
+[node name="CameraPivot" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.6, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraPivot"]
+shape = SubResource("SphereShape3D_h2yge")
+spring_length = 8.0
+margin = 0.05
+
+[node name="Camera" type="Camera3D" parent="CameraPivot/SpringArm3D"]
+unique_name_in_owner = true
