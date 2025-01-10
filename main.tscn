@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://cbhuay0pnmahq" path="res://scenes/player_cb.tscn" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
 size = Vector3(100, 1, 100)
@@ -47,5 +47,5 @@ mesh = SubResource("BoxMesh_ig7tw")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("ShaderMaterial_lquwl")
 
-[node name="PlayerCB" parent="." instance=ExtResource("4_1bvp3")]
-transform = Transform3D(-1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, -30)
+[node name="PlayerRB" parent="." instance=ExtResource("5_lquwl")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
