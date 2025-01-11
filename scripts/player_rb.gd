@@ -5,8 +5,8 @@ extends RigidBody3D
 
 
 @export_group("Movement")
-@export var move_speed := 8.0
-@export var acceleration := 20.0
+@export var move_speed := 10.0
+@export var acceleration := 50.0
 @export var rotation_speed := 12.0
 
 var _camera_input_direction := Vector2.ZERO
@@ -35,20 +35,19 @@ func _unhandled_input(event: InputEvent) -> void:
 	else: pass
 
 func _physics_process(delta: float) -> void:
+	# Camera Movement
 	_camera_pivot.rotation.x -= _camera_input_direction.y * delta
 	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 6.0, PI / 3.0)
 	_camera_pivot.rotation.y -= _camera_input_direction.x * delta
-	
 	_camera_input_direction = Vector2.ZERO
-
+	
+	# Body Movement
 	var raw_input := Input.get_vector(
 		"move_left", 
 		"move_right", 
 		"move_up", 
 		"move_down"
 	)
-
-	# TODO: change to linear impulses so player can fall from gravity
 	var forward := _camera.global_basis.z
 	var right := _camera.global_basis.x
 	
@@ -56,8 +55,11 @@ func _physics_process(delta: float) -> void:
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized()
 	
-	linear_velocity = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
-	#move_and_slide()
+	var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
+	
+	linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
+	linear_velocity.z = clamp(vel.z, -move_speed, move_speed)
+
 	
 	if move_direction.length() > 0.2:
 		_last_movement_direction = move_direction

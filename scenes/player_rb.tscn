@@ -11,7 +11,7 @@ albedo_color = Color(1, 0.513073, 0.468921, 1)
 material = SubResource("StandardMaterial3D_kl7y2")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_l4aw4"]
-albedo_color = Color(0.720719, 0.873811, 0.9759, 1)
+albedo_color = Color(0.742148, 0.824157, 0.751656, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_35slv"]
 material = SubResource("StandardMaterial3D_l4aw4")

@@ -14,7 +14,8 @@ func _ready():
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
 
 func _process(delta: float) -> void:
-	print("fps: ", Engine.get_frames_per_second())
+	#print("fps: ", Engine.get_frames_per_second())
+	pass
 
 func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 	for i in axis_amount:
@@ -32,6 +33,7 @@ func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 				cube.add_child(cube_mesh)
 				cube.physics_material_override = physics_material
 				cube_mesh.material_override = color_material
+				cube.mass = 10.0
 				cube.global_transform.origin = Vector3(i + CUBE_SIZE/2.0 - axis_amount/2.0, j + Y_OFFSET, k)
 
 func create_physics_material(bounciness:float):
