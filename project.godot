@@ -68,6 +68,11 @@ left_click={
 ]
 }
 
+[layer_names]
+
+3d_physics/layer_1="common"
+3d_physics/layer_2="camera"
+
 [navigation]
 
 pathfinding/max_threads=8

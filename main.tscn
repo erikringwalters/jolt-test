@@ -8,22 +8,33 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
 size = Vector3(100, 1, 100)
 
-[sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
-size = Vector3(100, 1, 100)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_lquwl"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1bvp3"]
 render_priority = 0
 shader = ExtResource("3_1bvp3")
-shader_parameter/gridColor = Color(0.376658, 0.376658, 0.376658, 1)
-shader_parameter/checkerColor = Color(0.188371, 0.188371, 0.188371, 1)
-shader_parameter/fadeStart = 0.0
-shader_parameter/fadeEnd = 10.0
-shader_parameter/unitSize = 4.0
-shader_parameter/subdivisions = 5
-shader_parameter/majorLineThickness = 2.0
-shader_parameter/minorLineThickness = 1.0
-shader_parameter/minorLineAlpha = 0.3
-shader_parameter/centerOffset = Vector3(0, 0, 0)
+shader_parameter/subdivisions = 32.0
+shader_parameter/grid_width = 0.02
+shader_parameter/background_color = Color(0.2, 0.2, 0.2, 1)
+shader_parameter/background_color_two = Color(0.1, 0.1, 0.1, 1)
+shader_parameter/grid_color = Color(0.5, 0.5, 0.5, 1)
+shader_parameter/dashed_scale_x = 0.02
+shader_parameter/dashed_scale_y = 0.02
+shader_parameter/dashed_count_x = 1.0
+shader_parameter/dashed_count_y = 1.0
+shader_parameter/point_width = 0.021
+shader_parameter/point_color = Color(0, 0, 0, 1)
+shader_parameter/point_scale_x = 0.05
+shader_parameter/point_scale_y = 0.05
+shader_parameter/inside_width = 0.01
+shader_parameter/inside_subdivisions = 6.0
+shader_parameter/inside_color = Color(0.4, 0.4, 0.4, 1)
+shader_parameter/in_dashed_scale_x = 0.3
+shader_parameter/in_dashed_scale_y = 0.3
+shader_parameter/in_dashed_count_x = 6.0
+shader_parameter/in_dashed_count_y = 6.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
+material = SubResource("ShaderMaterial_1bvp3")
+size = Vector3(100, 1, 100)
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
@@ -38,6 +49,8 @@ shadow_enabled = true
 
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+collision_layer = 3
+collision_mask = 3
 
 [node name="FloorCollision" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_ig7tw")
@@ -45,7 +58,7 @@ shape = SubResource("BoxShape3D_ig7tw")
 [node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
 mesh = SubResource("BoxMesh_ig7tw")
 skeleton = NodePath("../..")
-surface_material_override/0 = SubResource("ShaderMaterial_lquwl")
 
 [node name="PlayerRB" parent="." instance=ExtResource("5_lquwl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
+mass = 50.0

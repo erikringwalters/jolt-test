@@ -1,68 +1,122 @@
 shader_type spatial;
-render_mode blend_mix,depth_draw_opaque, unshaded;
 
-uniform vec4 gridColor: source_color;
-uniform vec4 checkerColor: source_color;
-uniform float fadeStart = 0.0;
-uniform float fadeEnd = 10.0;
-uniform float unitSize = 1.0;
-uniform int subdivisions: hint_range(1, 10) = 5;
-uniform float majorLineThickness = 2.0;
-uniform float minorLineThickness = 1.0;
-uniform float minorLineAlpha: hint_range(0.0, 1.0) = .3;
-uniform vec3 centerOffset = vec3(0.0, 0.0, 0.0);
+uniform float subdivisions : hint_range(1, 1024, 1.0) = 32;
+uniform float grid_width : hint_range(0.0, 1.0, 0.01) = 0.02;
+uniform vec3 background_color : source_color = vec3(0.2, 0.2, 0.2);
+uniform vec3 background_color_two : source_color = vec3(0.1, 0.1, 0.1);
+uniform vec3 grid_color : source_color = vec3(0.5, 0.5, 0.5);
+uniform float dashed_scale_x : hint_range(0.0, 0.99, 0.01) = 0.02;
+uniform float dashed_scale_y : hint_range(0.0, 0.99, 0.01) = 0.02;
+uniform float dashed_count_x : hint_range(0.0, 16.0, 1.0) = 1.0;
+uniform float dashed_count_y : hint_range(0.0, 16.0, 1.0) = 1.0;
 
-// calculate line mask, usning a bit of fwidth() magic to make line width not affected by perspective
-float grid(vec2 pos, float unit, float thickness){
-	vec2 threshold = fwidth(pos) * thickness * .5 / unit;
-	vec2 posWrapped = pos / unit;
-	vec2 line = step(fract(-posWrapped), threshold) + step(fract(posWrapped), threshold);
-	return max(line.x, line.y);
+group_uniforms Point;
+uniform float point_width : hint_range(0.0, 1.0, 0.01) = 0.021;
+uniform vec3 point_color : source_color = vec3(0.0, 0.0, 0.0);
+uniform float point_scale_x : hint_range(0.0, 1.0, 0.01) = 0.05;
+uniform float point_scale_y : hint_range(0.0, 1.0, 0.01) = 0.05;
+
+group_uniforms InsideGrid;
+uniform float inside_width : hint_range(0.0, 1.0, 0.01) = 0.01;
+uniform float inside_subdivisions : hint_range(1, 9, 1) = 6;
+uniform vec3  inside_color : source_color = vec3(0.4, 0.4, 0.4);
+uniform float in_dashed_scale_x : hint_range(0.0, 0.99, 0.01) = 0.3;
+uniform float in_dashed_scale_y : hint_range(0.0, 0.99, 0.01) = 0.3;
+uniform float in_dashed_count_x : hint_range(0.0, 18.0, 1.0) = 6.0;
+uniform float in_dashed_count_y : hint_range(0.0, 18.0, 1.0) = 6.0;
+
+
+float grid(vec2 uv, vec2 lineWidth,bool check) {
+	vec4 uvDDXY = vec4(dFdx(uv), dFdy(uv));
+	vec2 uvDeriv = vec2(length(uvDDXY.xz), length(uvDDXY.yw));
+	
+	bvec2 invertLine = bvec2(lineWidth.x > 0.5, lineWidth.y > 0.5); //RV
+	vec2 targetWidth = vec2(
+		invertLine.x ? 1.0 - lineWidth.x : lineWidth.x,
+		invertLine.y ? 1.0 - lineWidth.y : lineWidth.y
+		);
+	
+	
+	vec2 lineAA = uvDeriv * 1.5;
+	vec2 gridUV = abs((fract(uv)) * 2.0 - 1.0);
+	
+	
+	if (check == true){
+		targetWidth = vec2(1.0);
+		lineAA *= 1.5;
+		
+		float index = 0.0;
+		index += step(1.0, mod(uv.x, 2.0));
+		index += step(1.0, mod(uv.y, 2.0)) * 2.0;
+		
+		if (index == 1.0 || index == 2.0) {
+			lineAA = -lineAA;
+		}
+	} else  {
+		gridUV = vec2(
+			invertLine.x ? gridUV.x : 1.0 - gridUV.x,
+			invertLine.y ? gridUV.y : 1.0 - gridUV.y 
+		);
+	}
+	
+	vec2 drawWidth = clamp(targetWidth, uvDeriv, vec2(1.0));
+	vec2 gridBase = smoothstep(drawWidth + lineAA, drawWidth - lineAA, gridUV);
+	
+	
+	gridBase *= clamp(targetWidth / drawWidth, 0.0, 1.0);
+	gridBase = mix(gridBase , targetWidth , clamp((uvDeriv * 2.0 - 1.0) , 0.0, 1.0));
+	gridBase.x = invertLine.x ? 1.0 - gridBase.x : gridBase.x; 
+	gridBase.y = invertLine.y ? 1.0 - gridBase.y : gridBase.y; 
+	
+	
+	return mix(gridBase.x, 1.0, gridBase.y);
 }
 
-// calculate checkerboard mask
-float checker(vec2 pos, float unit){
-	float square1 = step(.5, fract(pos.x / unit *.5));
-	float square2 = step(.5, fract(pos.y / unit *.5));
-	return max(square1,square2) - square1 * square2;
+
+float dashed_grid(vec2 uv, vec2 lineWidth, vec2 dot_width, vec2 count, float add){
+	//Inverts the width values
+	lineWidth = 1.0 - lineWidth;
+	//Create two "masks", one for X and one for Y
+	float gridX = 1.0 - grid(vec2(uv.x * count.x, uv.y + add), vec2(dot_width.x, lineWidth.x), false);
+	float gridY = 1.0 - grid(vec2(uv.y * count.y, uv.x + add), vec2(dot_width.y, lineWidth.y), false);
+	
+	float grid = mix(gridX, 1.0, gridY);
+	return grid;
 }
+
 
 void fragment() {
-	// ray from camera to fragemnt in wrold space
-	vec3 rayWorld = normalize(mat3(INV_VIEW_MATRIX) * VIEW) ;
+	//Subdividing uv
+	vec2 uv = UV * subdivisions;
 	
-	// calculate fragment position in world space
-	vec3 posWorld;
-	float t = -(CAMERA_POSITION_WORLD.y - centerOffset.y) / (rayWorld.y );
-	posWorld.y = -centerOffset.y;
-	posWorld.xz = CAMERA_POSITION_WORLD.xz + t * rayWorld.xz + centerOffset.xz;
+	//CheckerBoard
+	float checkeredGrid = grid(uv , vec2(0.5), true);
 	
-	// calculate planar distance from camera to fragment (used for fading) 
-	float distPlanar = distance(posWorld.xz, centerOffset.xz);
-	
-	// grid
-	float line = grid(posWorld.xz, unitSize, majorLineThickness);
-	line += grid(posWorld.xz, unitSize / float(subdivisions), minorLineThickness) * minorLineAlpha;
-	line = clamp(line, 0.0, 1.0);
+	//Grid
+	float mainGrid = dashed_grid(
+			uv , vec2(grid_width), vec2(dashed_scale_x, dashed_scale_y),
+			vec2(dashed_count_x, dashed_count_y), 0.5);
+			
+	//Inside Grid
+	float insideGrid = dashed_grid(
+			uv * inside_subdivisions, vec2(inside_width),
+			vec2(in_dashed_scale_x, in_dashed_scale_y),
+			vec2(in_dashed_count_x, in_dashed_count_y), 0.5);
 
-	// checkerboard
-	float chec = checker(posWorld.xz, unitSize);
+	//Points
+	float pointGrid = dashed_grid(
+			uv + 0.5, vec2(point_width),
+			1.0 - vec2(point_scale_x , point_scale_y),
+			vec2(1.0), 0.0);
 	
-	// distance fade factor
-	float fadeFactor = 1.0 - clamp((distPlanar - fadeStart) / (fadeEnd - fadeStart), 0.0, 1.0);
+	//Add final color
+	vec3 grid = mix(background_color, background_color_two, checkeredGrid);
+	if (insideGrid != 0.0) grid = mix(grid, inside_color, insideGrid);
+	if (mainGrid != 0.0) grid = mix(grid, grid_color, mainGrid);
+	if (pointGrid != 0.0) grid = mix(grid, point_color, pointGrid);
 	
-	// write ground plane depth into z buffer
-	vec4 pp = (PROJECTION_MATRIX * (VIEW_MATRIX * vec4(posWorld, 1.0)));
-	DEPTH = pp.z / pp.w;
-	
-	// final alpha
-	float alphaGrid = line * gridColor.a;
-	float alphaChec = chec * checkerColor.a;
-	ALPHA = 1.0;clamp(alphaGrid + alphaChec, 0.0, 1.0) * fadeFactor;
-	// eliminate grid above the horizon
-	//ALPHA *= step(t, 0.0);
+	ALBEDO = grid;
 
-	// final color (premultiplied alpha blend)
-	ALBEDO = (checkerColor.rgb * alphaChec) * (1.0 - alphaGrid) + (gridColor.rgb * alphaGrid);
 	
 }
+

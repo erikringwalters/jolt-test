@@ -8,6 +8,8 @@ extends RigidBody3D
 @export var move_speed := 10.0
 @export var acceleration := 50.0
 @export var rotation_speed := 12.0
+@export var jump_speed := 10.0
+@export var jump_cooldown_time := 0.1
 
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
@@ -41,13 +43,14 @@ func _physics_process(delta: float) -> void:
 	_camera_pivot.rotation.y -= _camera_input_direction.x * delta
 	_camera_input_direction = Vector2.ZERO
 	
-	# Body Movement
+	# RigidBody Movement
 	var raw_input := Input.get_vector(
 		"move_left", 
 		"move_right", 
 		"move_up", 
 		"move_down"
 	)
+	
 	var forward := _camera.global_basis.z
 	var right := _camera.global_basis.x
 	
@@ -59,7 +62,6 @@ func _physics_process(delta: float) -> void:
 	
 	linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
 	linear_velocity.z = clamp(vel.z, -move_speed, move_speed)
-
 	
 	if move_direction.length() > 0.2:
 		_last_movement_direction = move_direction
