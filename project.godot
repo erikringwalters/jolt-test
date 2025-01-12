@@ -72,6 +72,7 @@ left_click={
 
 3d_physics/layer_1="common"
 3d_physics/layer_2="camera"
+3d_physics/layer_3="jumpable"
 
 [navigation]
 
@@ -80,6 +81,7 @@ pathfinding/max_threads=8
 [physics]
 
 3d/physics_engine="Jolt Physics"
+jolt_physics_3d/simulation/areas_detect_static_bodies=true
 common/physics_interpolation=true
 
 [rendering]

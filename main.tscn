@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=10 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
@@ -36,6 +36,10 @@ shader_parameter/in_dashed_count_y = 6.0
 material = SubResource("ShaderMaterial_1bvp3")
 size = Vector3(100, 1, 100)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_1bvp3"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
 
@@ -49,8 +53,8 @@ shadow_enabled = true
 
 [node name="Floor" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-collision_layer = 3
-collision_mask = 3
+collision_layer = 7
+collision_mask = 7
 
 [node name="FloorCollision" type="CollisionShape3D" parent="Floor"]
 shape = SubResource("BoxShape3D_ig7tw")
@@ -61,4 +65,14 @@ skeleton = NodePath("../..")
 
 [node name="PlayerRB" parent="." instance=ExtResource("5_lquwl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
-mass = 50.0
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.5, 0)
+collision_layer = 5
+collision_mask = 5
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+shape = SubResource("BoxShape3D_1bvp3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+mesh = SubResource("BoxMesh_lquwl")

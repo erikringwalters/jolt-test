@@ -8,18 +8,24 @@ extends RigidBody3D
 @export var move_speed := 10.0
 @export var acceleration := 50.0
 @export var rotation_speed := 12.0
-@export var jump_speed := 10.0
+@export var jump_speed := 5.0
 @export var jump_cooldown_time := 0.1
 
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
 
+var _grounded_color:Color
+
 @onready var _camera_pivot:Node3D = %CameraPivot
 @onready var _camera:Camera3D = %Camera
 @onready var _collision:CollisionShape3D = %Collision
+@onready var _ground_detector:Area3D = %GroundDetector
+@onready var _ground_detector_mesh:MeshInstance3D = %GroundDetectorMesh
+@onready var _jump_timer:Timer = %JumpTimer
 
 func _ready() -> void:
-	mass = 50.0
+	_grounded_color = _ground_detector_mesh.mesh.material.albedo_color
+	print(_grounded_color)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("left_click"):
@@ -37,10 +43,12 @@ func _unhandled_input(event: InputEvent) -> void:
 	else: pass
 
 func _physics_process(delta: float) -> void:
+	print(_ground_detector.get_overlapping_bodies())
+	
 	# Camera Movement
-	_camera_pivot.rotation.x -= _camera_input_direction.y * delta
-	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 6.0, PI / 3.0)
-	_camera_pivot.rotation.y -= _camera_input_direction.x * delta
+	_camera_pivot.rotation.x -= _camera_input_direction.y * get_physics_process_delta_time()
+	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 3.0, PI / 3.0)
+	_camera_pivot.rotation.y -= _camera_input_direction.x * get_physics_process_delta_time()
 	_camera_input_direction = Vector2.ZERO
 	
 	# RigidBody Movement
@@ -67,3 +75,15 @@ func _physics_process(delta: float) -> void:
 		_last_movement_direction = move_direction
 	var target_angle := Vector3.BACK.signed_angle_to(_last_movement_direction, Vector3.UP)
 	_collision.global_rotation.y = target_angle
+	
+	var _is_ready_to_jump = (
+		!_ground_detector.get_overlapping_bodies().is_empty() 
+		&& _jump_timer.is_stopped()
+	)
+	
+	_ground_detector_mesh.mesh.material.albedo_color = _grounded_color if _is_ready_to_jump else Color.LIGHT_BLUE
+		
+	
+	if Input.is_action_just_pressed("jump") && _is_ready_to_jump:
+		linear_velocity.y = jump_speed
+		_jump_timer.start()

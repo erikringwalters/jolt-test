@@ -35,6 +35,7 @@ func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 				cube.add_child(cube_mesh)
 				cube.physics_material_override = physics_material
 				cube_mesh.material_override = color_material
+				cube.set_collision_layer_value(3, true)
 				cube.mass = CUBE_MASS
 				cube.global_transform.origin = Vector3(
 					(i + CUBE_SIZE/2.0 - axis_amount/2.0) * CUBE_SPREAD_FACTOR, 
