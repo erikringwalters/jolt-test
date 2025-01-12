@@ -5,11 +5,12 @@ extends RigidBody3D
 
 
 @export_group("Movement")
-@export var move_speed := 10.0
+@export var move_speed := 7.5
 @export var acceleration := 50.0
 @export var rotation_speed := 12.0
-@export var jump_speed := 5.0
+@export var jump_speed := 4.5
 @export var jump_cooldown_time := 0.1
+@export var slow_movement_threshold := 0.1
 
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
@@ -64,24 +65,27 @@ func _physics_process(delta: float) -> void:
 	var move_direction := forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized()
+	
 	_set_state(move_direction)
 	_change_state_indicator_color()
-	var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
 	
-	linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
-	linear_velocity.z = clamp(vel.z, -move_speed, move_speed)
+	if state in [States.IDLE, States.RUNNING, States.SLIDING]:
+		# Movement
+		var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
+		linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
+		linear_velocity.z = clamp(vel.z, -move_speed, move_speed)
+		
+		# Rotation
+		if move_direction.length() > slow_movement_threshold:
+			_last_movement_direction = move_direction
+		var target_angle := Vector3.BACK.signed_angle_to(_last_movement_direction, Vector3.UP)
+		_collision.global_rotation.y = target_angle
 	
-	if move_direction.length() > 0.2:
-		_last_movement_direction = move_direction
-	var target_angle := Vector3.BACK.signed_angle_to(_last_movement_direction, Vector3.UP)
-	_collision.global_rotation.y = target_angle
-	
-	var _is_ready_to_jump = (
-		_is_grounded()
-		&& _jump_timer.is_stopped()
-	)
-	
-	if Input.is_action_just_pressed("jump") && _is_ready_to_jump:
+	if (	
+			Input.is_action_just_pressed("jump")
+			&& state in [States.IDLE, States.RUNNING, States.SLIDING] 
+			&& _jump_timer.is_stopped()
+		):
 		linear_velocity.y = jump_speed
 		_jump_timer.start()
 
@@ -90,10 +94,9 @@ func _is_grounded() -> bool:
 
 func _set_state(move_direction:Vector3) -> void:
 	print(move_direction)
-	var movement_threshold = 0.1
 	if _is_grounded():
-		if is_horizontal_near_zero(move_direction, movement_threshold):
-			if is_horizontal_near_zero(linear_velocity, movement_threshold):
+		if is_horizontal_near_zero(move_direction, slow_movement_threshold):
+			if is_horizontal_near_zero(linear_velocity, slow_movement_threshold):
 				state = States.IDLE
 			else: 
 				state = States.SLIDING
