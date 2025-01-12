@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=12 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
@@ -40,6 +40,12 @@ size = Vector3(100, 1, 100)
 
 [sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1bvp3"]
+height = 20.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lquwl"]
+height = 20.0
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
 
@@ -76,3 +82,16 @@ shape = SubResource("BoxShape3D_1bvp3")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
 mesh = SubResource("BoxMesh_lquwl")
+
+[node name="Pole" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, -40)
+collision_layer = 3
+collision_mask = 3
+
+[node name="PoleCollision" type="CollisionShape3D" parent="Pole"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+shape = SubResource("CylinderShape3D_1bvp3")
+
+[node name="PoleMesh" type="MeshInstance3D" parent="Pole"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+mesh = SubResource("CylinderMesh_lquwl")

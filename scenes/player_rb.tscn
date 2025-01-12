@@ -1,5 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://b1acnbgqgmrd5"]
+[gd_scene load_steps=11 format=3 uid="uid://b1acnbgqgmrd5"]
 
+[ext_resource type="PhysicsMaterial" uid="uid://ccee2f4386ohx" path="res://tres/player_rb_physics.tres" id="1_35slv"]
 [ext_resource type="Script" uid="uid://dqujq5ra1ylw8" path="res://scripts/player_rb.gd" id="1_kl7y2"]
 [ext_resource type="Material" uid="uid://baal84wepyfnc" path="res://tres/player_rb.tres" id="2_l4aw4"]
 [ext_resource type="Material" uid="uid://dacfhsljtbygc" path="res://tres/ground_indicator.tres" id="3_35slv"]
@@ -30,6 +31,7 @@ axis_lock_angular_x = true
 axis_lock_angular_y = true
 axis_lock_angular_z = true
 mass = 50.0
+physics_material_override = ExtResource("1_35slv")
 script = ExtResource("1_kl7y2")
 
 [node name="Collision" type="CollisionShape3D" parent="."]

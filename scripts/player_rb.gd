@@ -14,7 +14,9 @@ extends RigidBody3D
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
 
-var _grounded_color:Color
+enum States {IDLE, RUNNING, JUMPING, FALLING, GLIDING}
+var state: States = States.IDLE
+var _idle_color:Color
 
 @onready var _camera_pivot:Node3D = %CameraPivot
 @onready var _camera:Camera3D = %Camera
@@ -24,8 +26,8 @@ var _grounded_color:Color
 @onready var _jump_timer:Timer = %JumpTimer
 
 func _ready() -> void:
-	_grounded_color = _ground_detector_mesh.mesh.material.albedo_color
-	print(_grounded_color)
+	_idle_color = _ground_detector_mesh.mesh.material.albedo_color
+	print(_idle_color)
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("left_click"):
@@ -43,8 +45,20 @@ func _unhandled_input(event: InputEvent) -> void:
 	else: pass
 
 func _physics_process(delta: float) -> void:
-	print(_ground_detector.get_overlapping_bodies())
+	if _is_grounded():
+		if linear_velocity.x == 0.0 or linear_velocity.z == 0.0:
+			state = States.IDLE
+		else: 
+			state = States.RUNNING
+	else:
+		if linear_velocity.y > 0.0:
+			state = States.JUMPING
+		else:
+			state = States.FALLING
 	
+	_change_indicator_color()
+	
+	print(linear_velocity.y)
 	# Camera Movement
 	_camera_pivot.rotation.x -= _camera_input_direction.y * get_physics_process_delta_time()
 	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 3.0, PI / 3.0)
@@ -66,6 +80,8 @@ func _physics_process(delta: float) -> void:
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized()
 	
+	_set_state(move_direction)
+	
 	var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
 	
 	linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
@@ -77,13 +93,30 @@ func _physics_process(delta: float) -> void:
 	_collision.global_rotation.y = target_angle
 	
 	var _is_ready_to_jump = (
-		!_ground_detector.get_overlapping_bodies().is_empty() 
+		_is_grounded()
 		&& _jump_timer.is_stopped()
 	)
+	# TODO: Airborne
 	
-	_ground_detector_mesh.mesh.material.albedo_color = _grounded_color if _is_ready_to_jump else Color.LIGHT_BLUE
-		
 	
 	if Input.is_action_just_pressed("jump") && _is_ready_to_jump:
 		linear_velocity.y = jump_speed
 		_jump_timer.start()
+
+func _is_grounded() -> bool:
+	return !_ground_detector.get_overlapping_bodies().is_empty() 
+
+func _set_state(move_direction:Vector3) -> void:
+	if _is_grounded() && move_direction != Vector3.ZERO:
+		state = States.IDLE
+		
+
+func _change_indicator_color() -> void:
+	var color:Color = _idle_color
+	match state:
+		States.IDLE: color = Color.LIGHT_GOLDENROD
+		States.RUNNING: color = Color.LIGHT_GREEN
+		States.JUMPING: color = Color.LIGHT_BLUE
+		States.FALLING: color = Color.LIGHT_PINK
+		States.GLIDING: color = Color.LAVENDER
+	_ground_detector_mesh.mesh.material.albedo_color = color
