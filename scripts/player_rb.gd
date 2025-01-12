@@ -14,7 +14,7 @@ extends RigidBody3D
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
 
-enum States {IDLE, RUNNING, JUMPING, FALLING, GLIDING}
+enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 var state: States = States.IDLE
 var _idle_color:Color
 
@@ -26,8 +26,7 @@ var _idle_color:Color
 @onready var _jump_timer:Timer = %JumpTimer
 
 func _ready() -> void:
-	_idle_color = _ground_detector_mesh.mesh.material.albedo_color
-	print(_idle_color)
+	pass
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("left_click"):
@@ -45,20 +44,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	else: pass
 
 func _physics_process(delta: float) -> void:
-	if _is_grounded():
-		if linear_velocity.x == 0.0 or linear_velocity.z == 0.0:
-			state = States.IDLE
-		else: 
-			state = States.RUNNING
-	else:
-		if linear_velocity.y > 0.0:
-			state = States.JUMPING
-		else:
-			state = States.FALLING
-	
-	_change_indicator_color()
-	
-	print(linear_velocity.y)
 	# Camera Movement
 	_camera_pivot.rotation.x -= _camera_input_direction.y * get_physics_process_delta_time()
 	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 3.0, PI / 3.0)
@@ -79,9 +64,8 @@ func _physics_process(delta: float) -> void:
 	var move_direction := forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized()
-	
 	_set_state(move_direction)
-	
+	_change_state_indicator_color()
 	var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
 	
 	linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
@@ -96,8 +80,6 @@ func _physics_process(delta: float) -> void:
 		_is_grounded()
 		&& _jump_timer.is_stopped()
 	)
-	# TODO: Airborne
-	
 	
 	if Input.is_action_just_pressed("jump") && _is_ready_to_jump:
 		linear_velocity.y = jump_speed
@@ -107,16 +89,34 @@ func _is_grounded() -> bool:
 	return !_ground_detector.get_overlapping_bodies().is_empty() 
 
 func _set_state(move_direction:Vector3) -> void:
-	if _is_grounded() && move_direction != Vector3.ZERO:
-		state = States.IDLE
-		
+	print(move_direction)
+	var movement_threshold = 0.1
+	if _is_grounded():
+		if is_horizontal_near_zero(move_direction, movement_threshold):
+			if is_horizontal_near_zero(linear_velocity, movement_threshold):
+				state = States.IDLE
+			else: 
+				state = States.SLIDING
+		else: 
+			state = States.RUNNING
+	else:
+		if linear_velocity.y > 0.0:
+			state = States.JUMPING
+		else:
+			state = States.FALLING
 
-func _change_indicator_color() -> void:
+func _change_state_indicator_color() -> void:
 	var color:Color = _idle_color
 	match state:
 		States.IDLE: color = Color.LIGHT_GOLDENROD
 		States.RUNNING: color = Color.LIGHT_GREEN
+		States.SLIDING: color = Color.LAVENDER
 		States.JUMPING: color = Color.LIGHT_BLUE
 		States.FALLING: color = Color.LIGHT_PINK
-		States.GLIDING: color = Color.LAVENDER
 	_ground_detector_mesh.mesh.material.albedo_color = color
+
+func is_near_zero(value:float, threshold:float) -> bool:
+	return value > -threshold && value < threshold
+
+func is_horizontal_near_zero(value:Vector3, threshold:float):
+	return is_near_zero(value.x, threshold) and is_near_zero(value.z, threshold)
