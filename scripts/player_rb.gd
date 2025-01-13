@@ -93,20 +93,16 @@ func _is_grounded() -> bool:
 	return !_ground_detector.get_overlapping_bodies().is_empty() 
 
 func _set_state(move_direction:Vector3) -> void:
-	print(move_direction)
 	if _is_grounded():
 		if is_horizontal_near_zero(move_direction, slow_movement_threshold):
-			if is_horizontal_near_zero(linear_velocity, slow_movement_threshold):
-				state = States.IDLE
-			else: 
-				state = States.SLIDING
+			state = States.IDLE if (
+				is_horizontal_near_zero(linear_velocity, slow_movement_threshold)
+				) else States.SLIDING
 		else: 
 			state = States.RUNNING
 	else:
-		if linear_velocity.y > 0.0:
-			state = States.JUMPING
-		else:
-			state = States.FALLING
+		state = States.JUMPING if linear_velocity.y > 0.0 else States.FALLING
+
 
 func _change_state_indicator_color() -> void:
 	var color:Color = _idle_color
