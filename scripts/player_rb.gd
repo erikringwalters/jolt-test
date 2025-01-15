@@ -6,12 +6,12 @@ extends RigidBody3D
 @export_range(1.0, 10.0) var camera_stick_mult := 10.0
 
 @export_group("Movement")
-@export var move_speed := 7.5
+@export var move_speed := 8.0
 @export var acceleration := 50.0
 @export var rotation_speed := 12.0
 @export var jump_speed := 4.5
 @export var jump_cooldown_time := 0.1
-@export var slow_movement_threshold := 0.1
+@export var slow_movement_threshold := 0.001
 
 enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 
@@ -70,12 +70,14 @@ func _physics_process(delta: float) -> void:
 		"move_down"
 	)
 	
+	# TODO: Check movement speed when camera is high up
+	
 	var forward := _camera.global_basis.z
 	var right := _camera.global_basis.x
 	
 	var move_direction := forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
-	move_direction = move_direction.normalized()
+	move_direction = move_direction.normalized() * move_direction.length()
 	
 	_set_state(move_direction)
 	_change_state_indicator_color()

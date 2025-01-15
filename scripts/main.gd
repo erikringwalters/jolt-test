@@ -1,11 +1,11 @@
 extends Node3D
 
-const CUBE_AXIS_AMOUNT:int = 10
+const CUBE_AXIS_AMOUNT:int = 5
 const Y_OFFSET:float = 10.0
 const CUBE_SIZE:float = 1.0
 const CUBE_MASS:float = 1.0
 const CUBE_BOUNCINESS:float = 0.3
-const CUBE_SPREAD_FACTOR:float = 1.25
+const CUBE_SPREAD_FACTOR:float = 2.0
 
 var bouncy_material:PhysicsMaterial
 var color_material:StandardMaterial3D
@@ -41,6 +41,11 @@ func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 					(i + CUBE_SIZE/2.0 - axis_amount/2.0) * CUBE_SPREAD_FACTOR, 
 					(j + Y_OFFSET) * CUBE_SPREAD_FACTOR, 
 					k * CUBE_SPREAD_FACTOR
+				)
+				cube.rotation_degrees = Vector3(
+					randf_range(0, 360), 
+					randf_range(0, 360), 
+					randf_range(0, 360)
 				)
 
 func create_physics_material(bounciness:float):
