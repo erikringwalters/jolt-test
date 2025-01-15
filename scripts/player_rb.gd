@@ -1,8 +1,8 @@
 extends RigidBody3D
 
 @export_group("Camera")
-@export_range(0.0, 1.0) var mouse_sensitivity := 0.5
-
+@export_range(0.0, 1.0) var camera_sensitivity := 0.25
+@export_range(1.0, 10.0) var camera_stick_mult := 10.0
 
 @export_group("Movement")
 @export var move_speed := 7.5
@@ -12,10 +12,10 @@ extends RigidBody3D
 @export var jump_cooldown_time := 0.1
 @export var slow_movement_threshold := 0.1
 
+enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
+
 var _camera_input_direction := Vector2.ZERO
 var _last_movement_direction := Vector3.BACK
-
-enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 var state: States = States.IDLE
 var _idle_color:Color
 
@@ -41,14 +41,22 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
 	)
 	if is_camera_motion:
-		_camera_input_direction = event.screen_relative * mouse_sensitivity
+		_camera_input_direction = event.screen_relative * camera_sensitivity
 	else: pass
 
 func _physics_process(delta: float) -> void:
 	# Camera Movement
-	_camera_pivot.rotation.x -= _camera_input_direction.y * get_physics_process_delta_time()
-	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 3.0, PI / 3.0)
-	_camera_pivot.rotation.y -= _camera_input_direction.x * get_physics_process_delta_time()
+	var camera_stick_input := Input.get_vector(
+		"camera_left",
+		"camera_right",
+		"camera_up",
+		"camera_down"
+	)
+	
+	_camera_pivot.rotation.x -= _camera_input_direction.y + (camera_stick_input.y * camera_stick_mult) * camera_sensitivity * get_physics_process_delta_time()
+	_camera_pivot.rotation.x = clamp(_camera_pivot.rotation.x, -PI / 2.5, PI / 4.0)
+	_camera_pivot.rotation.y -= _camera_input_direction.x + (camera_stick_input.x * camera_stick_mult) * camera_sensitivity * get_physics_process_delta_time()
+	
 	_camera_input_direction = Vector2.ZERO
 	
 	# RigidBody Movement
@@ -58,6 +66,8 @@ func _physics_process(delta: float) -> void:
 		"move_up", 
 		"move_down"
 	)
+	
+	print(_camera.global_basis)
 	
 	var forward := _camera.global_basis.z
 	var right := _camera.global_basis.x
@@ -81,7 +91,7 @@ func _physics_process(delta: float) -> void:
 		var target_angle := Vector3.BACK.signed_angle_to(_last_movement_direction, Vector3.UP)
 		_collision.global_rotation.y = target_angle
 	
-	if (	
+	if (
 			Input.is_action_just_pressed("jump")
 			&& state in [States.IDLE, States.RUNNING, States.SLIDING] 
 			&& _jump_timer.is_stopped()
