@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://c3i200oktpqm7"]
+
+[ext_resource type="PackedScene" uid="uid://cnvbwfrgkmb53" path="res://glb/laura-low-poly.glb" id="1_28rwi"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a226o"]
+diffuse_mode = 3
+specular_mode = 2
+albedo_color = Color(0.989871, 0.645791, 0.473797, 1)
+roughness = 0.04
+
+[node name="laura-low-poly" instance=ExtResource("1_28rwi")]
+
+[node name="Cube" parent="." index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_a226o")

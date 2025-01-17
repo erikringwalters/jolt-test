@@ -9,7 +9,7 @@ extends RigidBody3D
 @export var move_speed := 8.0
 @export var acceleration := 50.0
 @export var rotation_speed := 12.0
-@export var jump_speed := 4.5
+@export var jump_speed := 5.0
 @export var jump_cooldown_time := 0.1
 @export var slow_movement_threshold := 0.001
 

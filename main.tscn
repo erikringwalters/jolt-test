@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=21 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://c3i200oktpqm7" path="res://scenes/laura_low_poly.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
@@ -64,6 +65,16 @@ use_colors = true
 use_custom_data = true
 mesh = SubResource("BoxMesh_272bh")
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_272bh"]
+size = Vector3(0.3, 0.05, 1.25)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lquwl"]
+albedo_color = Color(0.309737, 0.140191, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_5vw27"]
+material = SubResource("StandardMaterial3D_lquwl")
+size = Vector3(0.3, 0.05, 1.25)
+
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
 
@@ -90,15 +101,15 @@ skeleton = NodePath("../..")
 [node name="PlayerRB" parent="." instance=ExtResource("5_lquwl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
 
-[node name="StaticBody3D" type="StaticBody3D" parent="."]
+[node name="StepObstacle" type="StaticBody3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.5, 0)
 collision_layer = 5
 collision_mask = 5
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StepObstacle"]
 shape = SubResource("BoxShape3D_1bvp3")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StepObstacle"]
 mesh = SubResource("BoxMesh_lquwl")
 
 [node name="Pole" type="StaticBody3D" parent="."]
@@ -112,17 +123,29 @@ shape = SubResource("CylinderShape3D_1bvp3")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
 mesh = SubResource("CylinderMesh_lquwl")
 
-[node name="StaticBody3D2" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3, -55)
+[node name="Platform" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -55)
 collision_layer = 7
 collision_mask = 7
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Platform"]
 shape = SubResource("BoxShape3D_lquwl")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D2"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Platform"]
 mesh = SubResource("BoxMesh_7mycd")
 
 [node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20, 2, 0)
 multimesh = SubResource("MultiMesh_5vw27")
+
+[node name="Hoverboard" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -26)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Hoverboard"]
+shape = SubResource("BoxShape3D_272bh")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Hoverboard"]
+mesh = SubResource("BoxMesh_5vw27")
+
+[node name="laura-low-poly" parent="." instance=ExtResource("5_7mycd")]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1, 0, -26)

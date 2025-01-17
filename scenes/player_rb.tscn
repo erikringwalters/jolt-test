@@ -7,22 +7,27 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_c7ipo"]
 margin = 0.1
+radius = 0.3
+height = 1.75
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_rj34p"]
 material = ExtResource("2_l4aw4")
+radius = 0.3
+height = 1.75
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_35slv"]
 material = ExtResource("3_35slv")
 top_radius = 0.0
-bottom_radius = 0.2
+bottom_radius = 0.15
+height = 1.25
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kl7y2"]
-radius = 0.4
+radius = 0.25
 
 [sub_resource type="SphereMesh" id="SphereMesh_rj34p"]
 material = ExtResource("3_35slv")
-radius = 0.4
-height = 0.8
+radius = 0.25
+height = 0.5
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_rj34p"]
 
@@ -36,7 +41,7 @@ script = ExtResource("1_kl7y2")
 
 [node name="Collision" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.875, 0)
 shape = SubResource("CapsuleShape3D_c7ipo")
 
 [node name="Mesh" type="MeshInstance3D" parent="Collision"]
@@ -46,17 +51,16 @@ skeleton = NodePath("../..")
 
 [node name="PointerMesh" type="MeshInstance3D" parent="Collision"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, 0.4)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, 0.3)
 mesh = SubResource("CylinderMesh_35slv")
 
 [node name="GroundDetector" type="Area3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
 collision_layer = 4
 collision_mask = 4
 
 [node name="GroundCollision" type="CollisionShape3D" parent="GroundDetector"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
 shape = SubResource("SphereShape3D_kl7y2")
 
 [node name="GroundDetectorMesh" type="MeshInstance3D" parent="GroundDetector/GroundCollision"]
