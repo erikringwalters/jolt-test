@@ -1,11 +1,13 @@
 extends Node3D
 
+# Physics Cubes
 const CUBE_AXIS_AMOUNT:int = 5
 const Y_OFFSET:float = 10.0
 const CUBE_SIZE:float = 1.0
 const CUBE_MASS:float = 1.0
 const CUBE_BOUNCINESS:float = 0.3
 const CUBE_SPREAD_FACTOR:float = 2.0
+
 
 var bouncy_material:PhysicsMaterial
 var color_material:StandardMaterial3D
@@ -16,7 +18,7 @@ func _ready():
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
 
 func _process(delta: float) -> void:
-	#print("fps: ", Engine.get_frames_per_second())
+	print("fps: ", Engine.get_frames_per_second())
 	pass
 
 func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
