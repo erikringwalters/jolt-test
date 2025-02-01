@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://cnvbwfrgkmb53"
-path="res://.godot/imported/laura-low-poly.glb-6d55839bd59574580aba4895f137fc76.scn"
+uid="uid://0kiy8lmmjgik"
+path="res://.godot/imported/grass.glb-283903f78c2966698150d5dd5e589113.scn"
 
 [deps]
 
-source_file="res://glb/laura-low-poly.glb"
-dest_files=["res://.godot/imported/laura-low-poly.glb-6d55839bd59574580aba4895f137fc76.scn"]
+source_file="res://assets/glb/grass.glb"
+dest_files=["res://.godot/imported/grass.glb-283903f78c2966698150d5dd5e589113.scn"]
 
 [params]
 
