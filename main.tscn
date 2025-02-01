@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=22 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c3i200oktpqm7" path="res://scenes/laura_low_poly.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://fc01pqsskhjv" path="res://scenes/grass_land.tscn" id="6_7mycd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
 size = Vector3(100, 1, 100)
@@ -149,3 +150,15 @@ mesh = SubResource("BoxMesh_5vw27")
 
 [node name="laura-low-poly" parent="." instance=ExtResource("5_7mycd")]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1, 0, -26)
+
+[node name="GrassLand" parent="." instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.1, -10)
+
+[node name="GrassLand2" parent="." instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, -10)
+
+[node name="GrassLand3" parent="." instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0.1, 10)
+
+[node name="GrassLand4" parent="." instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0.1, 10)
