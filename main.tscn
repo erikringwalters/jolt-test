@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://cto28lygombai" path="res://scenes/ui.tscn" id="2_272bh"]
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c3i200oktpqm7" path="res://scenes/laura_low_poly.tscn" id="5_7mycd"]
-[ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player.tscn" id="5_lquwl"]
 [ext_resource type="Material" uid="uid://jtj8y45n1g4" path="res://tres/static.tres" id="6_5vw27"]
 [ext_resource type="PackedScene" uid="uid://fc01pqsskhjv" path="res://scenes/grass_land.tscn" id="6_7mycd"]
 

@@ -65,12 +65,13 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, 0.3)
 mesh = SubResource("CylinderMesh_35slv")
 
-[node name="CameraPointerMesh" type="MeshInstance3D" parent="Collision"]
+[node name="CameraPointer" type="MeshInstance3D" parent="Collision"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 0, 0)
 mesh = SubResource("CylinderMesh_athq8")
 
 [node name="CameraHandler" type="Node3D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("5_3k3na")
 
 [node name="CameraPivot" type="Node3D" parent="CameraHandler"]
@@ -86,11 +87,8 @@ margin = 0.05
 [node name="Camera" type="Camera3D" parent="CameraHandler/CameraPivot/SpringArm3D"]
 unique_name_in_owner = true
 
-[node name="CameraAnchor" type="StaticBody3D" parent="CameraHandler/CameraPivot/SpringArm3D/Camera"]
-unique_name_in_owner = true
-axis_lock_angular_y = true
-
 [node name="MovementHandler" type="Node3D" parent="."]
+unique_name_in_owner = true
 script = ExtResource("5_1k5lo")
 
 [node name="GroundDetector" type="Area3D" parent="MovementHandler"]

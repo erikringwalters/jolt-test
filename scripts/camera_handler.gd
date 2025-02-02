@@ -15,7 +15,7 @@ var is_camera_motion: bool = false
 @onready var parent: RigidBody3D = get_parent()
 @onready var camera: Camera3D = %Camera
 @onready var camera_pivot: Node3D = %CameraPivot
-@onready var camera_pointer: Node3D = %CameraPointerMesh
+@onready var camera_pointer: Node3D = %CameraPointer
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("left_click"):
@@ -45,8 +45,3 @@ func _process(delta: float) -> void:
 	camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI / 2.5, PI / 4.0)
 	camera_pivot.rotation.y -= camera_mouse_direction.x + (camera_stick_rotation.x * delta)
 	camera_mouse_direction = Vector2.ZERO
-	camera_pointer.global_rotation.y = camera.global_rotation.y
-
-
-func _physics_process(delta: float) -> void:
-	pass
