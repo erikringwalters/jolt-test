@@ -8,7 +8,6 @@ const CUBE_MASS:float = 1.0
 const CUBE_BOUNCINESS:float = 0.3
 const CUBE_SPREAD_FACTOR:float = 2.0
 
-
 var bouncy_material:PhysicsMaterial
 var color_material:StandardMaterial3D
 
@@ -19,7 +18,6 @@ func _ready():
 
 func _process(delta: float) -> void:
 	print("fps: ", Engine.get_frames_per_second())
-	pass
 
 func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 	for i in axis_amount:
