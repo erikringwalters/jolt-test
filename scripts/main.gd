@@ -1,15 +1,18 @@
 extends Node3D
 
 # Physics Cubes
-const CUBE_AXIS_AMOUNT:int = 5
-const Y_OFFSET:float = 10.0
-const CUBE_SIZE:float = 1.0
-const CUBE_MASS:float = 1.0
-const CUBE_BOUNCINESS:float = 0.3
-const CUBE_SPREAD_FACTOR:float = 2.0
+const CUBE_AXIS_AMOUNT: int = 5
+const Y_OFFSET: float = 10.0
+const CUBE_SIZE: float = 1.0
+const CUBE_MASS: float = 1.0
+const CUBE_BOUNCINESS: float = 0.3
+const CUBE_SPREAD_FACTOR: float = 2.0
 
-var bouncy_material:PhysicsMaterial
-var color_material:StandardMaterial3D
+var bouncy_material: PhysicsMaterial
+var color_material: StandardMaterial3D
+var cube: RigidBody3D
+var cube_collider: CollisionShape3D
+var cube_mesh: MeshInstance3D
 
 func _ready():
 	bouncy_material = create_physics_material(CUBE_BOUNCINESS)
@@ -17,20 +20,20 @@ func _ready():
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
 
 func _process(delta: float) -> void:
-	# print("fps: ", Engine.get_frames_per_second())
+	print("fps: ", Engine.get_frames_per_second())
 	pass
 
-func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
+func spawn_cubes(axis_amount: int, physics_material: PhysicsMaterial):
 	for i in axis_amount:
 		for j in axis_amount:
 			for k in axis_amount:
-				var cube = RigidBody3D.new()
+				cube = RigidBody3D.new()
 				add_child(cube);
-				var cube_collider = CollisionShape3D.new()
+				cube_collider = CollisionShape3D.new()
 				cube_collider.shape = BoxShape3D.new()
-				cube_collider.shape.size = Vector3(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE) 
+				cube_collider.shape.size = Vector3(CUBE_SIZE, CUBE_SIZE, CUBE_SIZE)
 				cube.add_child(cube_collider)
-				var cube_mesh = MeshInstance3D.new()
+				cube_mesh = MeshInstance3D.new()
 				cube_mesh.mesh = BoxMesh.new()
 				cube_mesh.mesh.size = cube_collider.shape.size
 				cube.add_child(cube_mesh)
@@ -39,24 +42,24 @@ func spawn_cubes(axis_amount:int, physics_material:PhysicsMaterial):
 				cube.set_collision_layer_value(3, true)
 				cube.mass = CUBE_MASS
 				cube.global_transform.origin = Vector3(
-					(i + CUBE_SIZE/2.0 - axis_amount/2.0) * CUBE_SPREAD_FACTOR, 
-					(j + Y_OFFSET) * CUBE_SPREAD_FACTOR, 
+					(i + CUBE_SIZE / 2.0 - axis_amount / 2.0) * CUBE_SPREAD_FACTOR,
+					(j + Y_OFFSET) * CUBE_SPREAD_FACTOR,
 					k * CUBE_SPREAD_FACTOR
 				)
 				cube.rotation_degrees = Vector3(
-					randf_range(0, 360), 
-					randf_range(0, 360), 
+					randf_range(0, 360),
+					randf_range(0, 360),
 					randf_range(0, 360)
 				)
 
-func create_physics_material(bounciness:float):
-	var mat = PhysicsMaterial.new()
-	mat.bounce = bounciness
-	return mat
+func create_physics_material(bounciness: float):
+	var material := PhysicsMaterial.new()
+	material.bounce = bounciness
+	return material
 
-func create_color_material(color:Color):
-	var mat = StandardMaterial3D.new()
-	mat.albedo_color = color
-	mat.metallic_specular = 0.75
-	mat.metallic = 0.1
-	return mat
+func create_color_material(color: Color):
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.metallic_specular = 0.75
+	material.metallic = 0.1
+	return material
