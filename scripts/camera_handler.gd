@@ -5,10 +5,10 @@ extends Node3D
 @export_range(0.0, 1.0) var camera_stick_sensitivity: float = 0.5
 @export_range(1.0, 10.0) var camera_stick_mult: float = 10.0
 
-var camera_input_direction: Vector2 = Vector2.ZERO
-var camera_stick_rotation: Vector2 = Vector2.ZERO
-var camera_stick_input: Vector2 = Vector2.ZERO
 var is_camera_motion: bool = false
+var camera_input_direction := Vector2.ZERO
+var camera_stick_rotation := Vector2.ZERO
+var camera_stick_input := Vector2.ZERO
 
 @onready var parent: RigidBody3D = get_parent()
 @onready var camera: Camera3D = %Camera

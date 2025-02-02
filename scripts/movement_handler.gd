@@ -9,17 +9,18 @@ enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 @export var jump_speed: float = 5.0
 @export var jump_cooldown_time: float = 0.1
 @export var slow_movement_threshold: float = 0.001
+@export var is_air_rotation_enabled: bool = false
 
-var raw_input: Vector2 = Vector2.ZERO
-var state: States = States.IDLE
-var last_movement_direction: Vector3 = Vector3.BACK
-var forward: Vector3 = Vector3.ZERO
-var right: Vector3 = Vector3.ZERO
-var velocity: Vector3 = Vector3.ZERO
+var raw_input := Vector2.ZERO
+var state := States.IDLE
+var last_movement_direction := Vector3.BACK
+var forward := Vector3.ZERO
+var right := Vector3.ZERO
+var velocity := Vector3.ZERO
 var target_angle: float = 0.0
-var move_direction: Vector3 = Vector3.ZERO
-var idle_color: Color = Color.LIGHT_GOLDENROD
-var state_color: Color = idle_color
+var move_direction := Vector3.ZERO
+var idle_color := Color.LIGHT_GOLDENROD
+var state_color := idle_color
 
 @onready var parent: RigidBody3D = get_parent()
 @onready var collision: CollisionShape3D = %Collision
@@ -50,6 +51,7 @@ func _physics_process(delta: float) -> void:
 		parent.linear_velocity.x = clamp(velocity.x, -move_speed, move_speed)
 		parent.linear_velocity.z = clamp(velocity.z, -move_speed, move_speed)
 	
+	if state in [States.IDLE, States.RUNNING, States.SLIDING] || is_air_rotation_enabled:
 		# Rotation
 		if move_direction.length() > slow_movement_threshold:
 			last_movement_direction = move_direction
