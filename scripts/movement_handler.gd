@@ -59,7 +59,6 @@ func _physics_process(delta: float) -> void:
 		target_angle = Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
 		collision.global_rotation.y = target_angle
 
-	
 	if (
 			Input.is_action_just_pressed("jump")
 			&& state in [States.IDLE, States.RUNNING, States.SLIDING]
@@ -70,9 +69,6 @@ func _physics_process(delta: float) -> void:
 
 	set_state(move_direction)
 	change_state_indicator_color()
-	
-	camera_pointer.global_rotation.y = camera.global_rotation.y
-
 
 func set_state(direction: Vector3) -> void:
 	if is_grounded():
@@ -88,7 +84,7 @@ func set_state(direction: Vector3) -> void:
 func change_state_indicator_color() -> void:
 	state_color = idle_color
 	match state:
-		States.IDLE: state_color = Color.LIGHT_GOLDENROD
+		States.IDLE: state_color = idle_color
 		States.RUNNING: state_color = Color.LIGHT_GREEN
 		States.SLIDING: state_color = Color.LAVENDER
 		States.JUMPING: state_color = Color.LIGHT_BLUE

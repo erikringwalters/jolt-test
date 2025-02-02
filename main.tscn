@@ -174,96 +174,128 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
 
 [node name="GrassLand5" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -10)
+visible = false
 
 [node name="GrassLand6" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, 10)
+visible = false
 
 [node name="GrassLand7" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, 30)
+visible = false
 
 [node name="GrassLand8" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 30)
+visible = false
 
 [node name="GrassLand9" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 30)
+visible = false
 
 [node name="GrassLand10" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 30)
+visible = false
 
 [node name="GrassLand11" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 10)
+visible = false
 
 [node name="GrassLand12" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -10)
+visible = false
 
 [node name="GrassLand13" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -30)
+visible = false
 
 [node name="GrassLand14" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -30)
+visible = false
 
 [node name="GrassLand15" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -30)
+visible = false
 
 [node name="GrassLand16" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -30)
+visible = false
 
 [node name="GrassLand17" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -30)
+visible = false
 
 [node name="GrassLand18" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -10)
+visible = false
 
 [node name="GrassLand19" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 10)
+visible = false
 
 [node name="GrassLand20" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 30)
+visible = false
 
 [node name="GrassLand21" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, 50)
+visible = false
 
 [node name="GrassLand22" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, 50)
+visible = false
 
 [node name="GrassLand23" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 50)
+visible = false
 
 [node name="GrassLand24" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 50)
+visible = false
 
 [node name="GrassLand25" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, 50)
+visible = false
 
 [node name="GrassLand26" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 50)
+visible = false
 
 [node name="GrassLand27" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 30)
+visible = false
 
 [node name="GrassLand28" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, 10)
+visible = false
 
 [node name="GrassLand29" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -10)
+visible = false
 
 [node name="GrassLand30" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -30)
+visible = false
 
 [node name="GrassLand31" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 50, 0, -50)
+visible = false
 
 [node name="GrassLand32" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 30, 0, -50)
+visible = false
 
 [node name="GrassLand33" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -50)
+visible = false
 
 [node name="GrassLand34" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -50)
+visible = false
 
 [node name="GrassLand35" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -50)
+visible = false
 
 [node name="GrassLand36" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -50)
+visible = false
