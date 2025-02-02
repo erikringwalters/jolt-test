@@ -64,22 +64,24 @@ func _physics_process(delta: float) -> void:
 	
 	var move_direction := forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
-	move_direction = move_direction.normalized() * move_direction.length()
-	
+	move_direction = move_direction.normalized()
+
 	set_state(move_direction)
 	change_state_indicator_color()
-	
+
+
 	if state in [States.IDLE, States.RUNNING, States.SLIDING]:
 		# Movement
 		var vel = linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
 		linear_velocity.x = clamp(vel.x, -move_speed, move_speed)
 		linear_velocity.z = clamp(vel.z, -move_speed, move_speed)
-		
+	
 		# Rotation
 		if move_direction.length() > slow_movement_threshold:
 			last_movement_direction = move_direction
 		var target_angle := Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
 		collision.global_rotation.y = target_angle
+
 	
 	if (
 			Input.is_action_just_pressed("jump")
@@ -115,7 +117,6 @@ func set_state(move_direction:Vector3) -> void:
 			state = States.RUNNING
 	else:
 		state = States.JUMPING if linear_velocity.y > 0.0 else States.FALLING
-
 
 func change_state_indicator_color() -> void:
 	var color:Color = idle_color
