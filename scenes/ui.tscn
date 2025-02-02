@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://cto28lygombai"]
+
+[ext_resource type="Script" uid="uid://dtprcm68wqv6m" path="res://scripts/ui.gd" id="1_nt7q6"]
+
+[node name="UI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_nt7q6")
+
+[node name="FPSLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+offset_left = 50.0
+offset_top = 20.0
+offset_right = 252.0
+offset_bottom = 119.0
+theme_override_colors/font_color = Color(0.8, 0.8, 0.8, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 72
+text = "FPS: 0"

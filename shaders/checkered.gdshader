@@ -1,121 +1,210 @@
 shader_type spatial;
 
-uniform float subdivisions : hint_range(1, 1024, 1.0) = 32;
-uniform float grid_width : hint_range(0.0, 1.0, 0.01) = 0.02;
-uniform vec3 background_color : source_color = vec3(0.2, 0.2, 0.2);
-uniform vec3 background_color_two : source_color = vec3(0.1, 0.1, 0.1);
-uniform vec3 grid_color : source_color = vec3(0.5, 0.5, 0.5);
-uniform float dashed_scale_x : hint_range(0.0, 0.99, 0.01) = 0.02;
-uniform float dashed_scale_y : hint_range(0.0, 0.99, 0.01) = 0.02;
-uniform float dashed_count_x : hint_range(0.0, 16.0, 1.0) = 1.0;
-uniform float dashed_count_y : hint_range(0.0, 16.0, 1.0) = 1.0;
+// Use global coordinate
+uniform bool world_uv = false;
+// Use the uv of the object instead of the vertex as a coordinate
+uniform bool object_uv = false;
+uniform vec2 object_uv_scale = vec2(1.0);
+// Render
+group_uniforms render;
+// Color preset index: 0 == disabled/custom
+uniform int preset_color : hint_range(0, 8, 1) = 0;
+uniform vec3 base_color : source_color = vec3(0.0);
+uniform float metalic : hint_range(0.0, 1.0, 0.001) = 0.25;
+uniform float roughness : hint_range(0.0, 1.0, 0.001) = 0.75;
 
-group_uniforms Point;
-uniform float point_width : hint_range(0.0, 1.0, 0.01) = 0.021;
-uniform vec3 point_color : source_color = vec3(0.0, 0.0, 0.0);
-uniform float point_scale_x : hint_range(0.0, 1.0, 0.01) = 0.05;
-uniform float point_scale_y : hint_range(0.0, 1.0, 0.01) = 0.05;
+// Main grid
+group_uniforms grid;
+uniform float grid_scale = 1.0;
+uniform float grid_width : hint_range(0.0, 1.0, 0.001) = 0.01;
+uniform vec4 grid_color : source_color = vec4(vec3(0.8), 1.0);
+// Inside grid
+group_uniforms inside_grid;
+uniform float inside_scale : hint_range(0.0, 10.0, 1) = 1.0;
+uniform float inside_width : hint_range(0.0, 1.0, 0.001) = 0.01;
+uniform vec4 inside_color : source_color = vec4(0.8);
+// Checker grid
+group_uniforms checkered_grid;
+uniform bool checkered = true;
+uniform bool sub_checkered_grid = false;
+uniform vec3 checkered_color : source_color = vec3(0.25);
+uniform float checkered_blend_color : hint_range(0.0, 1.0, 0.001) = 0.1;
 
-group_uniforms InsideGrid;
-uniform float inside_width : hint_range(0.0, 1.0, 0.01) = 0.01;
-uniform float inside_subdivisions : hint_range(1, 9, 1) = 6;
-uniform vec3  inside_color : source_color = vec3(0.4, 0.4, 0.4);
-uniform float in_dashed_scale_x : hint_range(0.0, 0.99, 0.01) = 0.3;
-uniform float in_dashed_scale_y : hint_range(0.0, 0.99, 0.01) = 0.3;
-uniform float in_dashed_count_x : hint_range(0.0, 18.0, 1.0) = 6.0;
-uniform float in_dashed_count_y : hint_range(0.0, 18.0, 1.0) = 6.0;
+// NOTE - When using texture, enable LOD generation and reimport the texture
+group_uniforms albedo_texture;
+uniform bool use_inside_uv = false;
+uniform bool use_albedo_color = false;
+uniform sampler2D albedo_texture : hint_default_transparent, filter_linear_mipmap;
+uniform float albedo_alpha : hint_range(0.0, 1.0, 0.001) = 0.5;
 
+// Preset colors
+const vec3 PRESET_COLORS[8] = {
+	vec3(0.2, 0.2, 0.208), // Dark
+	vec3(1.0, 0.0, 0.22), // Red
+	vec3(1.0, 0.549, 0.0), // Orange
+	vec3(1.0, 0.753, 0.0), // Yellow
+	vec3(0.106, 0.851, 0.467), // Green
+	vec3(0.318, 0.502, 0.78), // Blue
+	vec3(0.616, 0.133, 0.98), // Purple
+	vec3(0.827, 0.839, 0.851) // Light
+};
+const float EPSILON = 0.0001;
 
-float grid(vec2 uv, vec2 lineWidth,bool check) {
-	vec4 uvDDXY = vec4(dFdx(uv), dFdy(uv));
-	vec2 uvDeriv = vec2(length(uvDDXY.xz), length(uvDDXY.yw));
+varying vec3 vertex_uv;
+varying vec3 vertex_normal;
 
-	bvec2 invertLine = bvec2(lineWidth.x > 0.5, lineWidth.y > 0.5); //RV
-	vec2 targetWidth = vec2(
-		invertLine.x ? 1.0 - lineWidth.x : lineWidth.x,
-		invertLine.y ? 1.0 - lineWidth.y : lineWidth.y
-		);
-
-
-	vec2 lineAA = uvDeriv * 1.5;
-	vec2 gridUV = abs((fract(uv)) * 2.0 - 1.0);
-
-
-	if (check == true){
-		targetWidth = vec2(1.0);
-		lineAA *= 1.5;
-
-		float index = 0.0;
-		index += step(1.0, mod(uv.x, 2.0));
-		index += step(1.0, mod(uv.y, 2.0)) * 2.0;
-
-		if (index == 1.0 || index == 2.0) {
-			lineAA = -lineAA;
-		}
-	} else  {
-		gridUV = vec2(
-			invertLine.x ? gridUV.x : 1.0 - gridUV.x,
-			invertLine.y ? gridUV.y : 1.0 - gridUV.y
-		);
-	}
-
-	vec2 drawWidth = clamp(targetWidth, uvDeriv, vec2(1.0));
-	vec2 gridBase = smoothstep(drawWidth + lineAA, drawWidth - lineAA, gridUV);
-
-
-	gridBase *= clamp(targetWidth / drawWidth, 0.0, 1.0);
-	gridBase = mix(gridBase , targetWidth , clamp((uvDeriv * 2.0 - 1.0) , 0.0, 1.0));
-	gridBase.x = invertLine.x ? 1.0 - gridBase.x : gridBase.x;
-	gridBase.y = invertLine.y ? 1.0 - gridBase.y : gridBase.y;
-
-
-	return mix(gridBase.x, 1.0, gridBase.y);
+// Fix preset colors, base RAW
+vec3 srgb_to_linear(vec3 color) {
+	return mix(
+		pow((color.rgb + vec3(0.055)) * (1.0 / (1.0 + 0.055)), vec3(2.4)),
+		color.rgb * (1.0 / 12.92),
+		lessThan(color.rgb, vec3(0.04045))
+	);
 }
 
+float grid_structure(vec3 uv, float width, float mult) {
+	vec3 uvDDX = dFdx(uv);
+	vec3 uvDDY = dFdy(uv);
 
-float dashed_grid(vec2 uv, vec2 lineWidth, vec2 dot_width, vec2 count, float add){
-	//Inverts the width values
-	lineWidth = 1.0 - lineWidth;
-	//Create two "masks", one for X and one for Y
-	float gridX = 1.0 - grid(vec2(uv.x * count.x, uv.y + add), vec2(dot_width.x, lineWidth.x), false);
-	float gridY = 1.0 - grid(vec2(uv.y * count.y, uv.x + add), vec2(dot_width.y, lineWidth.y), false);
+	vec3 uv_deriv = vec3(
+		length(vec2(uvDDX.x, uvDDY.x)),
+		length(vec2(uvDDX.y, uvDDY.y)),
+		length(vec2(uvDDX.z, uvDDY.z))
+	);
+	uv_deriv = max(uv_deriv, EPSILON);
+	vec3 line_AA = uv_deriv * 1.5;
 
-	float grid = mix(gridX, 1.0, gridY);
-	return grid;
+	vec3 width_value = 1.0 - vec3(width);
+
+	vec3 target_width = width > 0.5 ? width_value : 1.0 - width_value;
+	vec3 draw_width = clamp(target_width, uv_deriv, vec3(0.5));
+
+	vec3 grid_uv = abs(fract(uv * mult) * 2.0 - 1.0);
+	grid_uv = width > 0.5 ? 1.0 - grid_uv : grid_uv;
+	// Blend normal sides
+	float blend_value = 1.0;
+	vec3 blend_normal = abs(normalize(cross(dFdy(uv), dFdx(uv))));
+	vec3 blend_factor = smoothstep(blend_value - EPSILON, blend_value + EPSILON, blend_normal);
+	blend_factor = width > 0.5 ? 1.0 - blend_factor : blend_factor;
+
+	vec3 grid_normal_a = width > 0.5 ? vec3(-1.0) : grid_uv;
+	vec3 grid_normal_b = width > 0.5 ? grid_uv : vec3(1.0);
+
+	grid_uv = mix(grid_normal_a, grid_normal_b, blend_factor);
+
+	vec3 grid_base = smoothstep(draw_width + line_AA, draw_width - line_AA, grid_uv);
+	grid_base *= clamp(target_width / draw_width, EPSILON, 1.0);
+	grid_base = mix(grid_base, target_width, clamp(uv_deriv * 2.0 - 1.0, EPSILON, 1.0));
+	grid_base = width > 0.5 ? 1.0 - grid_base : grid_base;
+
+	return mix(mix(grid_base.x, 1.0, grid_base.y), 1.0, grid_base.z);
 }
 
+float checkered_grid(vec3 uv, float subdivide) {
+	// Checkered grid
+	vec3 board_uv = floor(uv - 0.5 - subdivide + EPSILON);
+	float board = mod((board_uv.x) + (board_uv.y) + (board_uv.z), 2.0);
+	// Blend normal sides
+	float blend_value = 1.0;
+	vec3 blend_normal = abs(normalize(cross(dFdy(uv), dFdx(uv))));
+	vec3 blend_factor = smoothstep(blend_value - EPSILON, blend_value + EPSILON, blend_normal);
+	// Filter AA
+	vec3 smooth_uv = abs(fract(uv - subdivide) * 2.0 - 1.0);
+	smooth_uv = mix(smooth_uv, vec3(1.0), blend_factor);
+
+	vec3 uv_deriv = fwidth(uv);
+	uv_deriv = max(uv_deriv, EPSILON);
+	vec3 uv_AA = uv_deriv * 4.0;
+
+	float smooth_value = 1.0;
+	float smooth_edge = smoothstep(0.0, uv_AA.x * smooth_value, smooth_uv.x);
+	smooth_edge *= smoothstep(0.0, uv_AA.y * smooth_value, smooth_uv.y);
+	smooth_edge *= smoothstep(0.0, uv_AA.z * smooth_value, smooth_uv.z);
+
+	vec3 moire_step = smoothstep(vec3(1.0), vec3(0.0), uv_deriv);
+	float moire_range = (moire_step.x * moire_step.y * moire_step.z);
+	// Applay AA/Moire blend color
+	board = mix(0.0, board, smooth_edge);
+	board = mix(0.05, board, moire_range);
+
+	return board;
+}
+
+vec4 triplanar_texture(sampler2D tex, vec3 uv, bool sub) {
+	uv = sub ? uv : uv * 0.5 + 0.5;
+
+	vec4 albedo_x = texture(tex, object_uv ? uv.xy : uv.zy);
+	vec4 albedo_y = texture(tex, object_uv ? uv.xy : uv.xz);
+	vec4 albedo_z = texture(tex, uv.xy);
+
+	vec3 tri_normal = vec3(0.0);
+	vec2 blend_normal = abs(normalize(vertex_normal.xz));
+	tri_normal.xz = max(vec2(0.0), blend_normal - 0.67);
+	tri_normal.xz /= max(0.00001, dot(tri_normal.xz, vec2(1.0)));
+
+	tri_normal.y = clamp((abs(vertex_normal.y) - 0.675) * 80.0, 0.0, 1.0);
+	tri_normal.xz *= (1.0 - tri_normal.y);
+
+	vec4 albedo = (
+		albedo_x * tri_normal.x +
+		albedo_y * tri_normal.y +
+		albedo_z * tri_normal.z
+	);
+	return albedo;
+}
+
+void vertex() {
+	vertex_normal = NORMAL;
+
+	vertex_uv = mix(VERTEX, (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz, float(world_uv));
+	vertex_uv = mix(vertex_uv, vec3(UV * object_uv_scale, 0.0), float(object_uv));
+	vertex_uv *= vec3(1.0, -1.0, 1.0);
+}
 
 void fragment() {
-	//Subdividing uv
-	vec2 uv = UV * subdivisions;
+	vec3 base_uv = vertex_uv * grid_scale;
 
-	//CheckerBoard
-	float checkeredGrid = grid(uv , vec2(0.5), true);
+	// Base Grid
+	float base_grid = grid_structure(base_uv, grid_width, 0.5);
+	// Inside Grid
+	float inside_factor = mod(inside_scale, 2.0) < EPSILON ? 0.5 : 0.0;
+	float inside_reduce = floor(inside_scale / 2.0) - (abs(inside_factor - 0.5) < EPSILON ? 1.0 : 0.0);
+	vec3 inside_uv = base_uv * (inside_scale - inside_factor - inside_reduce);
+	float inside_grid = grid_structure(inside_uv - (0.5 - inside_factor), inside_width, 1.0);
+	inside_grid = inside_scale < EPSILON ? 0.0 : inside_grid;
+	inside_grid = mix(inside_grid, 0.0, smoothstep(0.0 - EPSILON, 0.5 + EPSILON, base_grid));
+	// Checkerboard
+	vec3 checker_uv = mix(base_uv / 2.0, base_uv, float(sub_checkered_grid));
+	float checkerboard = 0.0;
+	checkerboard = checkered ? checkered_grid(checker_uv, sub_checkered_grid ? 0.5 : 0.0) : 0.0;
 
-	//Grid
-	float mainGrid = dashed_grid(
-			uv , vec2(grid_width), vec2(dashed_scale_x, dashed_scale_y),
-			vec2(dashed_count_x, dashed_count_y), 0.5);
+	// Albedo texture(triplanar)
+	vec4 albedo = triplanar_texture(
+			albedo_texture,
+			use_inside_uv ? inside_uv - 0.5 - (0.5 - inside_factor) : base_uv,
+			use_inside_uv
+	);
 
-	//Inside Grid
-	float insideGrid = dashed_grid(
-			uv * inside_subdivisions, vec2(inside_width),
-			vec2(in_dashed_scale_x, in_dashed_scale_y),
-			vec2(in_dashed_count_x, in_dashed_count_y), 0.5);
+	// Color
+	vec3 color = base_color;
+	color = preset_color != 0 ? srgb_to_linear(PRESET_COLORS[preset_color - 1]) : color;
 
-	//Points
-	float pointGrid = dashed_grid(
-			uv + 0.5, vec2(point_width),
-			1.0 - vec2(point_scale_x , point_scale_y),
-			vec2(1.0), 0.0);
+	// Grayscale
+	if (use_albedo_color == false) {
+		float gray = dot(albedo.rgb, vec3(0.299, 0.587, 0.114));
+		albedo.rgb = vec3(gray);
+	}
 
-	//Add final color
-	vec3 grid = mix(background_color, background_color_two, checkeredGrid);
-	if (insideGrid != 0.0) grid = mix(grid, inside_color, insideGrid);
-	if (mainGrid != 0.0) grid = mix(grid, grid_color, mainGrid);
-	if (pointGrid != 0.0) grid = mix(grid, point_color, pointGrid);
+	// Applay texture/base color/checkered
+	vec3 board = mix(color, checkered_color, checkerboard * checkered_blend_color);
+	albedo.rgb = use_albedo_color ? albedo.rgb : albedo.rgb * board;
+
+	// Mix Color
+	vec3 grid_a = mix(board, mix(board, albedo.rgb, albedo.a), albedo_alpha);
+	vec3 grid_b = mix(grid_a, inside_color.rgb, inside_grid * inside_color.a);
+	vec3 grid = mix(grid_b, grid_color.rgb, base_grid * grid_color.a);
 
 	ALBEDO = grid;
-
-
+	METALLIC = metalic;
+	ROUGHNESS = roughness;
 }

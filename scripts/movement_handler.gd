@@ -9,7 +9,7 @@ enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 @export var jump_speed: float = 5.0
 @export var jump_cooldown_time: float = 0.1
 @export var slow_movement_threshold: float = 0.001
-@export var is_air_rotation_enabled: bool = false
+@export var is_air_rotation_enabled: bool = true
 
 var raw_input := Vector2.ZERO
 var state := States.IDLE
@@ -25,6 +25,7 @@ var state_color := idle_color
 @onready var parent: RigidBody3D = get_parent()
 @onready var collision: CollisionShape3D = %Collision
 @onready var camera: Camera3D = %Camera
+@onready var camera_pointer: MeshInstance3D = %CameraPointerMesh
 @onready var ground_detector: Area3D = %GroundDetector
 @onready var ground_detector_mesh: MeshInstance3D = %GroundDetectorMesh
 @onready var jump_timer: Timer = %JumpTimer
@@ -37,21 +38,21 @@ func _physics_process(delta: float) -> void:
 		"move_up",
 		"move_down"
 	)
-
-	forward = camera.global_basis.z
-	right = camera.global_basis.x
+	
+	forward = -camera_pointer.global_basis.y
+	right = camera_pointer.global_basis.x
 	
 	move_direction = forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
-	move_direction = move_direction.normalized()
+	move_direction = move_direction.normalized() * raw_input.length()
 
-	if state in [States.IDLE, States.RUNNING, States.SLIDING]:
+	if can_walk():
 		# Movement
 		velocity = parent.linear_velocity.move_toward(move_direction * move_speed, acceleration * delta)
 		parent.linear_velocity.x = clamp(velocity.x, -move_speed, move_speed)
 		parent.linear_velocity.z = clamp(velocity.z, -move_speed, move_speed)
 	
-	if state in [States.IDLE, States.RUNNING, States.SLIDING] || is_air_rotation_enabled:
+	if can_walk() || is_air_rotation_enabled:
 		# Rotation
 		if move_direction.length() > slow_movement_threshold:
 			last_movement_direction = move_direction
@@ -69,6 +70,8 @@ func _physics_process(delta: float) -> void:
 
 	set_state(move_direction)
 	change_state_indicator_color()
+
+	camera_pointer.global_rotation.y = camera.global_rotation.y
 
 func set_state(direction: Vector3) -> void:
 	if is_grounded():
@@ -93,6 +96,9 @@ func change_state_indicator_color() -> void:
 
 func is_grounded() -> bool:
 	return !ground_detector.get_overlapping_bodies().is_empty()
+
+func can_walk() -> bool:
+	return state in [States.IDLE, States.RUNNING, States.SLIDING]
 
 func is_near_zero(value: float, threshold: float) -> bool:
 	return value > -threshold && value < threshold

@@ -1,7 +1,8 @@
-[gd_scene load_steps=22 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=23 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://cto28lygombai" path="res://scenes/ui.tscn" id="2_272bh"]
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c3i200oktpqm7" path="res://scenes/laura_low_poly.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
@@ -13,26 +14,26 @@ size = Vector3(120, 1, 120)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1bvp3"]
 render_priority = 0
 shader = ExtResource("3_1bvp3")
-shader_parameter/subdivisions = 32.0
+shader_parameter/world_uv = false
+shader_parameter/object_uv = false
+shader_parameter/object_uv_scale = Vector2(1, 1)
+shader_parameter/preset_color = 0
+shader_parameter/base_color = Color(0, 0, 0, 1)
+shader_parameter/metalic = 0.25
+shader_parameter/roughness = 0.75
+shader_parameter/grid_scale = 1.0
 shader_parameter/grid_width = 0.02
-shader_parameter/background_color = Color(0.2, 0.2, 0.2, 1)
-shader_parameter/background_color_two = Color(0.1, 0.1, 0.1, 1)
 shader_parameter/grid_color = Color(0.5, 0.5, 0.5, 1)
-shader_parameter/dashed_scale_x = 0.02
-shader_parameter/dashed_scale_y = 0.02
-shader_parameter/dashed_count_x = 1.0
-shader_parameter/dashed_count_y = 1.0
-shader_parameter/point_width = 0.021
-shader_parameter/point_color = Color(0, 0, 0, 1)
-shader_parameter/point_scale_x = 0.05
-shader_parameter/point_scale_y = 0.05
+shader_parameter/inside_scale = 1.0
 shader_parameter/inside_width = 0.01
-shader_parameter/inside_subdivisions = 6.0
 shader_parameter/inside_color = Color(0.4, 0.4, 0.4, 1)
-shader_parameter/in_dashed_scale_x = 0.3
-shader_parameter/in_dashed_scale_y = 0.3
-shader_parameter/in_dashed_count_x = 6.0
-shader_parameter/in_dashed_count_y = 6.0
+shader_parameter/checkered = true
+shader_parameter/sub_checkered_grid = false
+shader_parameter/checkered_color = Color(0.25, 0.25, 0.25, 1)
+shader_parameter/checkered_blend_color = 0.1
+shader_parameter/use_inside_uv = false
+shader_parameter/use_albedo_color = false
+shader_parameter/albedo_alpha = 0.5
 
 [sub_resource type="BoxMesh" id="BoxMesh_ig7tw"]
 material = SubResource("ShaderMaterial_1bvp3")
@@ -79,6 +80,8 @@ size = Vector3(0.3, 0.05, 1.25)
 [node name="Main" type="Node3D"]
 script = ExtResource("1_ig7tw")
 
+[node name="UI" parent="." instance=ExtResource("2_272bh")]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("2_0xm2m")
 
@@ -99,11 +102,11 @@ shape = SubResource("BoxShape3D_ig7tw")
 mesh = SubResource("BoxMesh_ig7tw")
 skeleton = NodePath("../..")
 
-[node name="PlayerRB" parent="." instance=ExtResource("5_lquwl")]
+[node name="Player" parent="." instance=ExtResource("5_lquwl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -26)
 
 [node name="StepObstacle" type="StaticBody3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21, 0.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18, 0.5, -36)
 collision_layer = 5
 collision_mask = 5
 
@@ -155,6 +158,15 @@ transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, -1, 0,
 
 [node name="GrassLand" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -10)
+
+[node name="GrassLand2" parent="GrassChunks" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
+
+[node name="GrassLand3" parent="GrassChunks" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
+
+[node name="GrassLand4" parent="GrassChunks" instance=ExtResource("6_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
 
 [node name="GrassLand5" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -10)
@@ -251,12 +263,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -30, 0, -50)
 
 [node name="GrassLand36" parent="GrassChunks" instance=ExtResource("6_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 0, -50)
-
-[node name="GrassLand2" parent="GrassChunks" instance=ExtResource("6_7mycd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -10)
-
-[node name="GrassLand3" parent="GrassChunks" instance=ExtResource("6_7mycd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, 10)
-
-[node name="GrassLand4" parent="GrassChunks" instance=ExtResource("6_7mycd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 10)
