@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bpki3lf4tpqkv"]
+[gd_scene load_steps=24 format=3 uid="uid://bpki3lf4tpqkv"]
 
 [ext_resource type="Script" uid="uid://dnbd4cjvey7up" path="res://scripts/main.gd" id="1_ig7tw"]
 [ext_resource type="Environment" uid="uid://c7gu2mfdhxnne" path="res://tres/main.tres" id="2_0xm2m"]
@@ -6,6 +6,7 @@
 [ext_resource type="Shader" uid="uid://ggg655t8sci6" path="res://shaders/checkered.gdshader" id="3_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c3i200oktpqm7" path="res://scenes/laura_low_poly.tscn" id="5_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b1acnbgqgmrd5" path="res://scenes/player_rb.tscn" id="5_lquwl"]
+[ext_resource type="Material" uid="uid://jtj8y45n1g4" path="res://tres/static.tres" id="6_5vw27"]
 [ext_resource type="PackedScene" uid="uid://fc01pqsskhjv" path="res://scenes/grass_land.tscn" id="6_7mycd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
@@ -42,6 +43,7 @@ size = Vector3(120, 1, 120)
 [sub_resource type="BoxShape3D" id="BoxShape3D_1bvp3"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_lquwl"]
+material = ExtResource("6_5vw27")
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_1bvp3"]
 height = 20.0
@@ -125,6 +127,7 @@ shape = SubResource("CylinderShape3D_1bvp3")
 
 [node name="PoleMesh" type="MeshInstance3D" parent="Pole"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10, 0)
+material_override = ExtResource("6_5vw27")
 mesh = SubResource("CylinderMesh_lquwl")
 
 [node name="Platform" type="StaticBody3D" parent="."]
@@ -136,6 +139,7 @@ collision_mask = 7
 shape = SubResource("BoxShape3D_lquwl")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Platform"]
+material_override = ExtResource("6_5vw27")
 mesh = SubResource("BoxMesh_7mycd")
 
 [node name="MultiMeshInstance3D" type="MultiMeshInstance3D" parent="."]

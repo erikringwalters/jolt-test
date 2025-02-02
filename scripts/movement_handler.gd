@@ -70,8 +70,9 @@ func _physics_process(delta: float) -> void:
 
 	set_state(move_direction)
 	change_state_indicator_color()
-
+	
 	camera_pointer.global_rotation.y = camera.global_rotation.y
+
 
 func set_state(direction: Vector3) -> void:
 	if is_grounded():

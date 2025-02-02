@@ -7,7 +7,7 @@ extends Node3D
 @export_range(1.0, 10.0) var mouse_mult: float = 100.0
 @export_range(1.0, 10.0) var camera_stick_mult: float = 10.0
 
-var camera_input_direction := Vector2.ZERO
+var camera_mouse_direction := Vector2.ZERO
 var camera_stick_rotation := Vector2.ZERO
 var camera_stick_input := Vector2.ZERO
 var is_camera_motion: bool = false
@@ -29,10 +29,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED
 	)
 	if is_camera_motion:
-		camera_input_direction = event.screen_relative \
-		* camera_mouse_sensitivity
-		# * mouse_mult \
+		camera_mouse_direction = event.screen_relative \
+		* camera_mouse_sensitivity / mouse_mult
 		# * get_physics_process_delta_time()
+
+func _process(delta: float) -> void:
+	camera_pivot.rotation.x -= camera_mouse_direction.y
+	camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI / 2.5, PI / 4.0)
+	camera_pivot.rotation.y -= camera_mouse_direction.x
+	camera_mouse_direction = Vector2.ZERO
+
 
 func _physics_process(delta: float) -> void:
 	# Camera Movement
@@ -44,7 +50,6 @@ func _physics_process(delta: float) -> void:
 	)
 
 	camera_stick_rotation = (camera_stick_input * camera_stick_mult * camera_stick_sensitivity)
-	camera_pivot.rotation.x -= (camera_input_direction.y + camera_stick_rotation.y) * delta
+	camera_pivot.rotation.x -= (camera_stick_rotation.y) * delta
 	camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI / 2.5, PI / 4.0)
-	camera_pivot.rotation.y -= (camera_input_direction.x + camera_stick_rotation.x) * delta
-	camera_input_direction = Vector2.ZERO
+	camera_pivot.rotation.y -= (camera_stick_rotation.x) * delta
