@@ -2,12 +2,6 @@ extends Node3D
 
 enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 
-@export_group("Camera")
-@export_range(0.0, 10.0) var camera_mouse_sensitivity: float = 0.25
-@export_range(0.0, 10.0) var camera_stick_sensitivity: float = 0.5
-@export_range(1.0, 10.0) var mouse_mult: float = 0.01
-@export_range(1.0, 10.0) var camera_stick_mult: float = 10.0
-
 @export_group("Movement")
 @export var move_speed: float = 8.0
 @export var acceleration: float = 50.0
@@ -15,7 +9,7 @@ enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 @export var jump_speed: float = 5.0
 @export var jump_cooldown_time: float = 0.1
 @export var slow_movement_threshold: float = 0.001
-@export var is_air_rotation_enabled: bool = true
+@export var is_air_rotation_enabled: bool = false
 
 var camera_mouse_direction := Vector2.ZERO
 var camera_stick_rotation := Vector2.ZERO
@@ -34,8 +28,6 @@ var idle_color := Color.LIGHT_GOLDENROD
 var state_color := idle_color
 
 @onready var parent: RigidBody3D = get_parent()
-@onready var camera: Camera3D = %Camera
-@onready var camera_pivot: Node3D = %CameraPivot
 @onready var camera_pointer: Node3D = %CameraPointer
 @onready var collision: CollisionShape3D = %Collision
 @onready var ground_detector: Area3D = %GroundDetector

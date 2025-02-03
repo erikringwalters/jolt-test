@@ -85,13 +85,14 @@ script = ExtResource("5_3k3na")
 unique_name_in_owner = true
 transform = Transform3D(-1, 2.26267e-08, -8.44439e-08, 0, 0.965926, 0.258819, 8.74228e-08, 0.258819, -0.965926, 0, 1.6, 0)
 
-[node name="SpringArm3D" type="SpringArm3D" parent="CameraHandler/CameraPivot"]
+[node name="SpringArm" type="SpringArm3D" parent="CameraHandler/CameraPivot"]
+unique_name_in_owner = true
 collision_mask = 2
 shape = SubResource("SphereShape3D_rj34p")
-spring_length = 8.0
+spring_length = 7.0
 margin = 0.05
 
-[node name="Camera" type="Camera3D" parent="CameraHandler/CameraPivot/SpringArm3D"]
+[node name="Camera" type="Camera3D" parent="CameraHandler/CameraPivot/SpringArm"]
 unique_name_in_owner = true
 
 [node name="MovementHandler" type="Node3D" parent="."]
