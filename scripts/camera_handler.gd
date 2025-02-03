@@ -40,8 +40,10 @@ func _process(delta: float) -> void:
 		"camera_up",
 		"camera_down"
 	)
+
 	camera_stick_rotation = (camera_stick_input * camera_stick_mult * camera_stick_sensitivity)
 	camera_pivot.rotation.x -= camera_mouse_direction.y + (camera_stick_rotation.y * delta)
 	camera_pivot.rotation.x = clamp(camera_pivot.rotation.x, -PI / 2.5, PI / 4.0)
 	camera_pivot.rotation.y -= camera_mouse_direction.x + (camera_stick_rotation.x * delta)
+	camera_pointer.global_rotation_degrees = Vector3(-90.0, camera_pivot.global_rotation_degrees.y, 0.0)
 	camera_mouse_direction = Vector2.ZERO

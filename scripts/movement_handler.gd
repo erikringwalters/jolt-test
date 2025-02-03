@@ -2,6 +2,12 @@ extends Node3D
 
 enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 
+@export_group("Camera")
+@export_range(0.0, 10.0) var camera_mouse_sensitivity: float = 0.25
+@export_range(0.0, 10.0) var camera_stick_sensitivity: float = 0.5
+@export_range(1.0, 10.0) var mouse_mult: float = 0.01
+@export_range(1.0, 10.0) var camera_stick_mult: float = 10.0
+
 @export_group("Movement")
 @export var move_speed: float = 8.0
 @export var acceleration: float = 50.0
@@ -10,6 +16,11 @@ enum States {IDLE, RUNNING, SLIDING, JUMPING, FALLING}
 @export var jump_cooldown_time: float = 0.1
 @export var slow_movement_threshold: float = 0.001
 @export var is_air_rotation_enabled: bool = true
+
+var camera_mouse_direction := Vector2.ZERO
+var camera_stick_rotation := Vector2.ZERO
+var camera_stick_input := Vector2.ZERO
+var is_camera_motion: bool = false
 
 var raw_input := Vector2.ZERO
 var state := States.IDLE
@@ -23,15 +34,16 @@ var idle_color := Color.LIGHT_GOLDENROD
 var state_color := idle_color
 
 @onready var parent: RigidBody3D = get_parent()
-@onready var collision: CollisionShape3D = %Collision
-@onready var camera_pivot: Node3D = %CameraPivot
 @onready var camera: Camera3D = %Camera
-@onready var camera_pointer: MeshInstance3D = %CameraPointer
+@onready var camera_pivot: Node3D = %CameraPivot
+@onready var camera_pointer: Node3D = %CameraPointer
+@onready var collision: CollisionShape3D = %Collision
 @onready var ground_detector: Area3D = %GroundDetector
 @onready var ground_detector_mesh: MeshInstance3D = %GroundDetectorMesh
 @onready var jump_timer: Timer = %JumpTimer
 
-func _physics_process(delta: float) -> void:
+func _process(delta: float) -> void:
+
 	# Movement Input
 	raw_input = Input.get_vector(
 		"move_left",
@@ -39,14 +51,22 @@ func _physics_process(delta: float) -> void:
 		"move_up",
 		"move_down"
 	)
-	
-	camera_pointer.global_rotation.y = camera_pivot.global_rotation.y
+
 	forward = -camera_pointer.global_basis.y
 	right = camera_pointer.global_basis.x
 	
 	move_direction = forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized() * raw_input.length()
+
+	if can_walk() || is_air_rotation_enabled:
+		# Rotation
+		if move_direction.length() > slow_movement_threshold:
+			last_movement_direction = move_direction
+		target_angle = Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
+		collision.global_rotation.y = target_angle
+	
+func _physics_process(delta: float) -> void:
 
 	# RigidBody Movement
 	if can_walk():
@@ -55,13 +75,6 @@ func _physics_process(delta: float) -> void:
 		parent.linear_velocity.x = clamp(velocity.x, -move_speed, move_speed)
 		parent.linear_velocity.z = clamp(velocity.z, -move_speed, move_speed)
 	
-	if can_walk() || is_air_rotation_enabled:
-		# Rotation
-		if move_direction.length() > slow_movement_threshold:
-			last_movement_direction = move_direction
-		target_angle = Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
-		collision.global_rotation.y = target_angle
-
 	if (
 			Input.is_action_just_pressed("jump")
 			&& state in [States.IDLE, States.RUNNING, States.SLIDING]
@@ -72,6 +85,7 @@ func _physics_process(delta: float) -> void:
 
 	set_state(move_direction)
 	change_state_indicator_color()
+
 	pass
 
 func set_state(direction: Vector3) -> void:

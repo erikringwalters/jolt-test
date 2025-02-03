@@ -1,9 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://b1acnbgqgmrd5"]
+[gd_scene load_steps=16 format=3 uid="uid://b1acnbgqgmrd5"]
 
 [ext_resource type="PhysicsMaterial" uid="uid://ccee2f4386ohx" path="res://tres/player_rb_physics.tres" id="1_35slv"]
 [ext_resource type="Script" uid="uid://dqujq5ra1ylw8" path="res://scripts/player.gd" id="1_kl7y2"]
 [ext_resource type="Material" uid="uid://baal84wepyfnc" path="res://tres/player_rb.tres" id="2_l4aw4"]
 [ext_resource type="Material" uid="uid://dacfhsljtbygc" path="res://tres/ground_indicator.tres" id="3_35slv"]
+[ext_resource type="PackedScene" uid="uid://cnvbwfrgkmb53" path="res://assets/glb/laura-low-poly.glb" id="3_fjrip"]
 [ext_resource type="Script" uid="uid://doge26hy125f3" path="res://scripts/movement_handler.gd" id="5_1k5lo"]
 [ext_resource type="Script" uid="uid://y6a7neyf4vsf" path="res://scripts/camera_handler.gd" id="5_3k3na"]
 
@@ -57,18 +58,24 @@ shape = SubResource("CapsuleShape3D_c7ipo")
 
 [node name="Mesh" type="MeshInstance3D" parent="Collision"]
 unique_name_in_owner = true
+visible = false
 mesh = SubResource("CapsuleMesh_rj34p")
 skeleton = NodePath("../..")
 
 [node name="BodyPointerMesh" type="MeshInstance3D" parent="Collision"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0.5, 0.3)
+visible = false
 mesh = SubResource("CylinderMesh_35slv")
 
 [node name="CameraPointer" type="MeshInstance3D" parent="Collision"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1.31134e-07, 1, 0, -1, 1.31134e-07, 0, 0, 0)
+visible = false
 mesh = SubResource("CylinderMesh_athq8")
+
+[node name="laura-low-poly" parent="Collision" instance=ExtResource("3_fjrip")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.875, 0)
 
 [node name="CameraHandler" type="Node3D" parent="."]
 unique_name_in_owner = true
@@ -102,6 +109,7 @@ shape = SubResource("SphereShape3D_kl7y2")
 
 [node name="GroundDetectorMesh" type="MeshInstance3D" parent="MovementHandler/GroundDetector/GroundCollision"]
 unique_name_in_owner = true
+visible = false
 mesh = SubResource("SphereMesh_rj34p")
 
 [node name="JumpTimer" type="Timer" parent="MovementHandler"]
