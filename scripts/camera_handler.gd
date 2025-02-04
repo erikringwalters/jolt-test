@@ -6,8 +6,8 @@ extends Node3D
 @export_range(1.0, 10.0) var mouse_mult: float = 0.01
 @export_range(1.0, 10.0) var camera_stick_mult: float = 10.0
 @export var min_spring_arm_length: float = 2.0
-@export var med_spring_arm_length: float = 7.0
-@export var max_spring_arm_length: float = 12.0
+@export var med_spring_arm_length: float = 5.0
+@export var max_spring_arm_length: float = 8.0
 @export var spring_arm_length: float = med_spring_arm_length
 @export var zoom_speed: float = 0.05
 
