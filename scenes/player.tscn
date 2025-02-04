@@ -92,8 +92,13 @@ shape = SubResource("SphereShape3D_rj34p")
 spring_length = 7.0
 margin = 0.05
 
+[node name="CameraDestination" type="Marker3D" parent="CameraHandler/CameraPivot/SpringArm"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 2.13163e-14, 0, 1, -5.85732e-07, 0.00457942, 6.93757)
+
 [node name="Camera" type="Camera3D" parent="CameraHandler/CameraPivot/SpringArm"]
 unique_name_in_owner = true
+transform = Transform3D(1, 1.42109e-14, 4.26326e-14, 3.55271e-15, 1, 0, 1.42109e-14, 0, 1, -5.85732e-07, 0.00457907, 6.93758)
 
 [node name="MovementHandler" type="Node3D" parent="."]
 unique_name_in_owner = true
