@@ -9,7 +9,6 @@ extends Node3D
 @export var med_spring_arm_length: float = 7.0
 @export var max_spring_arm_length: float = 12.0
 @export var spring_arm_length: float = med_spring_arm_length
-@export var camera_follow_speed: float = 0.1
 @export var zoom_speed: float = 0.05
 
 var camera_mouse_direction := Vector2.ZERO
@@ -22,10 +21,6 @@ var is_camera_motion: bool = false
 @onready var camera_pivot: Node3D = %CameraPivot
 @onready var spring_arm: SpringArm3D = %SpringArm
 @onready var camera_pointer: Node3D = %CameraPointer
-@onready var camera_destination: Marker3D = %CameraDestination
-
-func _ready() -> void:
-	camera.global_transform = camera_destination.global_transform
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("left_click"):
@@ -50,6 +45,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		camera_mouse_direction = event.screen_relative * camera_mouse_sensitivity * mouse_mult
 
 func _process(delta: float) -> void:
+	move_camera(delta)
+	pass
+
+func move_camera(delta: float) -> void:
 	# Camera Movement
 	camera_stick_input = Input.get_vector(
 		"camera_left",
@@ -65,9 +64,7 @@ func _process(delta: float) -> void:
 	camera_pointer.global_rotation_degrees = Vector3(-90.0, camera_pivot.global_rotation_degrees.y, 0.0)
 	camera_mouse_direction = Vector2.ZERO
 
-	# camera.global_transform = lerp(camera.global_transform, camera_destination.global_transform, camera_follow_speed)
 	spring_arm.spring_length = lerp(spring_arm.spring_length, spring_arm_length, zoom_speed)
-	pass
 
 func handle_big_zoom_in(length: float) -> float:
 	if length > min_spring_arm_length && length <= med_spring_arm_length:

@@ -1,7 +1,7 @@
 extends Node3D
 
 # Physics Cubes
-const CUBE_AXIS_AMOUNT: int = 5
+const CUBE_AXIS_AMOUNT: int = 10
 const Y_OFFSET: float = 10.0
 const CUBE_SIZE: float = 1.0
 const CUBE_MASS: float = 1.0
@@ -16,7 +16,7 @@ var cube_mesh: MeshInstance3D
 
 func _ready():
 	bouncy_material = create_physics_material(CUBE_BOUNCINESS)
-	color_material = create_color_material(Color.LIGHT_SKY_BLUE)
+	color_material = create_color_material(Color.DIM_GRAY)
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
 
 func _process(delta: float) -> void:
@@ -28,6 +28,7 @@ func spawn_cubes(axis_amount: int, physics_material: PhysicsMaterial):
 		for j in axis_amount:
 			for k in axis_amount:
 				cube = RigidBody3D.new()
+				# cube.physics_interpolation_mode = Node.PHYSICS_INTERPOLATION_MODE_ON
 				add_child(cube);
 				cube_collider = CollisionShape3D.new()
 				cube_collider.shape = BoxShape3D.new()

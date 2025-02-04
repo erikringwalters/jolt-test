@@ -28,6 +28,7 @@ var idle_color := Color.LIGHT_GOLDENROD
 var state_color := idle_color
 
 @onready var parent: RigidBody3D = get_parent()
+@onready var camera_handler: Node3D = %CameraHandler
 @onready var camera_pointer: Node3D = %CameraPointer
 @onready var collision: CollisionShape3D = %Collision
 @onready var ground_detector: Area3D = %GroundDetector
@@ -35,7 +36,14 @@ var state_color := idle_color
 @onready var jump_timer: Timer = %JumpTimer
 
 func _process(delta: float) -> void:
+	rotate_body()
+	pass
 
+func _physics_process(delta: float) -> void:
+	move_body(delta)
+	pass
+
+func rotate_body() -> void:
 	# Movement Input
 	raw_input = Input.get_vector(
 		"move_left",
@@ -46,7 +54,6 @@ func _process(delta: float) -> void:
 
 	forward = -camera_pointer.global_basis.y
 	right = camera_pointer.global_basis.x
-	
 	move_direction = forward * raw_input.y + right * raw_input.x
 	move_direction.y = 0.0
 	move_direction = move_direction.normalized() * raw_input.length()
@@ -57,9 +64,8 @@ func _process(delta: float) -> void:
 			last_movement_direction = move_direction
 		target_angle = Vector3.BACK.signed_angle_to(last_movement_direction, Vector3.UP)
 		collision.global_rotation.y = target_angle
-	
-func _physics_process(delta: float) -> void:
 
+func move_body(delta: float) -> void:
 	# RigidBody Movement
 	if can_walk():
 		# Movement
@@ -77,8 +83,6 @@ func _physics_process(delta: float) -> void:
 
 	set_state(move_direction)
 	change_state_indicator_color()
-
-	pass
 
 func set_state(direction: Vector3) -> void:
 	if is_grounded():
