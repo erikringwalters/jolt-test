@@ -17,6 +17,9 @@ noise = SubResource("FastNoiseLite_luwd6")
 render_priority = 0
 shader = ExtResource("1_luwd6")
 shader_parameter/WindNoise = SubResource("NoiseTexture2D_mlvwr")
+shader_parameter/force = 1.0
+shader_parameter/radius = 2.0
+shader_parameter/player_pos = Vector3(0, 0, 0)
 shader_parameter/BaseColor = Color(0.232917, 0.25, 0.225, 1)
 shader_parameter/GrassColor = Color(0.313626, 0.395052, 0.277918, 1)
 
