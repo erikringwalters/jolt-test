@@ -14,7 +14,7 @@ var cube: RigidBody3D
 var cube_collider: CollisionShape3D
 var cube_mesh: MeshInstance3D
 
-func _ready():
+func _ready() -> void:
 	bouncy_material = create_physics_material(CUBE_BOUNCINESS)
 	color_material = create_color_material(Color.DIM_GRAY)
 	spawn_cubes(CUBE_AXIS_AMOUNT, bouncy_material)
@@ -23,7 +23,7 @@ func _process(delta: float) -> void:
 	# print("fps: ", Engine.get_frames_per_second())
 	pass
 
-func spawn_cubes(axis_amount: int, physics_material: PhysicsMaterial):
+func spawn_cubes(axis_amount: int, physics_material: PhysicsMaterial) -> void:
 	for i in axis_amount:
 		for j in axis_amount:
 			for k in axis_amount:
@@ -53,12 +53,12 @@ func spawn_cubes(axis_amount: int, physics_material: PhysicsMaterial):
 					randf_range(0, 360)
 				)
 
-func create_physics_material(bounciness: float):
+func create_physics_material(bounciness: float) -> PhysicsMaterial:
 	var material := PhysicsMaterial.new()
 	material.bounce = bounciness
 	return material
 
-func create_color_material(color: Color):
+func create_color_material(color: Color) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
 	material.metallic_specular = 0.75

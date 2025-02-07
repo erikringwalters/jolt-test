@@ -25,7 +25,7 @@ var velocity := Vector3.ZERO
 var target_angle: float = 0.0
 var move_direction := Vector3.ZERO
 var idle_color := Color.LIGHT_GOLDENROD
-var state_color := idle_color
+var state_color:Color = idle_color
 
 @onready var parent: RigidBody3D = get_parent()
 @onready var camera_handler: Node3D = %CameraHandler
