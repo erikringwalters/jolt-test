@@ -1,0 +1,32 @@
+[gd_resource type="ShaderMaterial" load_steps=6 format=3 uid="uid://utoqfu0gahb2"]
+
+[ext_resource type="Shader" uid="uid://1bifx1bxmwf2" path="res://shaders/wind_grass.gdshader" id="1_bc1gq"]
+
+[sub_resource type="Gradient" id="Gradient_bc1gq"]
+colors = PackedColorArray(0.00041729, 0.000878712, 0.000157976, 1, 0.08018, 0.19, 0.0608, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_c5bvf"]
+gradient = SubResource("Gradient_bc1gq")
+width = 16
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_y2yd3"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_1lnnk"]
+width = 256
+height = 256
+seamless = true
+noise = SubResource("FastNoiseLite_y2yd3")
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_bc1gq")
+shader_parameter/wind_speed = 0.2
+shader_parameter/wind_strength = 2.0
+shader_parameter/wind_texture_tile_size = 20.0
+shader_parameter/wind_vertical_strength = 0.3
+shader_parameter/wind_horizontal_direction = Vector2(1, 0.5)
+shader_parameter/color_ramp = SubResource("GradientTexture1D_c5bvf")
+shader_parameter/wind_noise = SubResource("NoiseTexture2D_1lnnk")
+shader_parameter/character_position = null
+shader_parameter/character_radius = 3.0
+shader_parameter/character_push_strength = 1.0
